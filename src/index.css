@@ -1,13 +1,35 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
+/* تخصيص لون النقاط في slider */
+.slick-dots li button:before {
+    color: #d01c6d !important; /* pink-600 */
+    opacity: 0.5;
+    font-size: 20px; /* تكبير حجم النقطة */
+  }
+  
+  .slick-dots li.slick-active button:before {
+    color: #db2777 !important;
+    opacity: 1;
+    font-size: 20px; /* تكبير النقطة النشطة */
+  }
+  
+  /* تكبير حجم النقاط بشكل عام */
+  .slick-dots li {
+    width: 25px;
+    height: 25px;
+    margin: 0 5px; /* مسافة بين النقاط */
+  }
+  
+  .slick-dots li button {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%; /* دائرة */
+    display: block;
+    text-align: center;
+    padding: 0;
+    border: none;
+    background: transparent;
+  }
+  
