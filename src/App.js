@@ -9,6 +9,9 @@ import WeddingPage from "./components/WeddingPage";
 import BirthdayPage from "./components/BirthdayPage";
 import './App.css';
 
+import AdminDashboard from './components/AdminDashboard';
+import { useLocation } from "react-router-dom";
+
 // المكونات التي سيتم تحميلها بشكل Lazy
 const Home = React.lazy(() => import("./pages/Home"));
 const Register = React.lazy(() => import("./components/Register"));
@@ -23,12 +26,14 @@ const ProductsList = React.lazy(() => import("./components/ProductsList"));
 
 
 function App() {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith("/admin");
   return (
     <CartProvider>
       <Router>
-      <ScrollToTop /> {/* هذا هو العنصر الجديد */}
-
-        <Navbar />
+        <ScrollToTop />
+        {/* Navbar يظهر فقط لو مش صفحة أدمن */}
+        {!isAdminRoute && <Navbar />}
         <Suspense fallback={<div>Loading...</div>}>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -47,9 +52,12 @@ function App() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/birthday" element={<BirthdayPage />} />
             <Route path="/wedding" element={<WeddingPage />} />
+            <Route path="/admin/*" element={<AdminDashboard />} />
           </Routes>
         </Suspense>
-        <Footer />
+
+        {/* Footer يظهر فقط لو مش صفحة أدمن */}
+        {!isAdminRoute && <Footer />}
       </Router>
     </CartProvider>
   );
