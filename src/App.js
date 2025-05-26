@@ -47,6 +47,7 @@ function App() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/birthday" element={<BirthdayPage />} />
             <Route path="/wedding" element={<WeddingPage />} />
+            
           </Routes>
         </Suspense>
         <Footer />

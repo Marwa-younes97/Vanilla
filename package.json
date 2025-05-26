@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "proxy": "https://bakeryproject-1onw.onrender.com",
-
   "dependencies": {
     "@tailwindcss/vite": "^4.1.4",
     "@testing-library/dom": "^10.4.0",
@@ -19,6 +18,7 @@
     "react-router-dom": "^7.5.2",
     "react-scripts": "5.0.1",
     "react-slick": "^0.30.3",
+    "recharts": "^2.15.3",
     "slick-carousel": "^1.8.1",
     "swiper": "^11.2.6",
     "web-vitals": "^2.1.4"
