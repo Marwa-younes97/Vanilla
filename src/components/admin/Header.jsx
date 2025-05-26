@@ -133,7 +133,7 @@ const Header = () => {
           src={
             admin?.image
               ? `https://bakeryproject-1onw.onrender.com/${admin.image}`
-              : "/imgs/admin_image.jpg"
+              : "../../../public/admin_image.jpg"
           }
           alt="Admin Profile"
           className="w-10 h-10 rounded-full object-cover border-2 border-pink-300 shadow"
