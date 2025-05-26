@@ -1,5 +1,5 @@
 import React, { Suspense } from "react";
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 
 import Navbar from "./components/Navbar";
@@ -10,7 +10,7 @@ import BirthdayPage from "./components/BirthdayPage";
 import './App.css';
 
 import AdminDashboard from './components/AdminDashboard';
-import { useLocation } from "react-router-dom";
+
 
 // المكونات التي سيتم تحميلها بشكل Lazy
 const Home = React.lazy(() => import("./pages/Home"));
