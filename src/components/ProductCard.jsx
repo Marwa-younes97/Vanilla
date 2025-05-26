@@ -1,20 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaHeart, FaStar, FaRegStar } from "react-icons/fa";
 import { useCart } from '../context/CartContext';
+import { useFavorites } from '../context/FavoritesContext';
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
   const [isFavorited, setIsFavorited] = useState(false);
   const { addToCart } = useCart();
+  const { addFavorite, removeFavorite, favorites } = useFavorites();
+
+  // ✅ تأكد إذا كان المنتج ضمن المفضلة
+  useEffect(() => {
+    const isFav = favorites.some((fav) => fav._id === product._id);
+    setIsFavorited(isFav);
+  }, [favorites, product._id]);
 
   const handleCardClick = () => {
     navigate(`/product/${product._id}`);
   };
 
+  // ✅ منطق الإضافة والحذف من المفضلة
   const toggleFavorite = (e) => {
     e.stopPropagation();
-    setIsFavorited(!isFavorited);
+    if (isFavorited) {
+      removeFavorite(product._id);
+    } else {
+      addFavorite(product._id);
+    }
+    // لا حاجة لتحديث الحالة يدويًا لأن useEffect سيقوم بذلك
   };
 
   const averageRating =
@@ -29,11 +43,10 @@ const ProductCard = ({ product }) => {
 
   return (
     <div
-    className="bg-white border rounded-2xl shadow-sm p-4 w-[300px] h-[400px] max-w-xs overflow-hidden 
-               transition duration-300 transform hover:-translate-y-1 hover:shadow-[0px 4px 10px rgba(236, 72, 153, 0.6)] cursor-pointer"
-    onClick={handleCardClick}
-  >
-  
+      className="bg-white border rounded-2xl shadow-sm p-4 w-[300px] h-[400px] max-w-xs overflow-hidden 
+                 transition duration-300 transform hover:-translate-y-1 hover:shadow-[0px 4px 10px rgba(236, 72, 153, 0.6)] cursor-pointer"
+      onClick={handleCardClick}
+    >
       <div className="relative">
         <img
           src={product.image}
@@ -97,3 +110,4 @@ const ProductCard = ({ product }) => {
 };
 
 export default ProductCard;
+

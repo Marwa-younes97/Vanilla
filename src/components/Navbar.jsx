@@ -3,6 +3,7 @@ import Login from "../components/Login";
 import SignUp from "../components/Register";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { FaHeart } from "react-icons/fa";
 
 const Navbar = () => {
   const { getCartCount } = useCart();
@@ -101,6 +102,15 @@ const Navbar = () => {
             <span className="text-lg text-pink-600">{getCartCount() > 0 ? getCartCount() : ""}</span>
           </Link>
         </li>
+                  <li>
+            <Link
+              to="/favorites"
+              className="flex items-center gap-2 hover:text-yellow-400 transition relative"
+            >
+              <FaHeart />
+              {/* يمكنك إضافة عداد المفضلة لاحقًا هنا إن أردت */}
+            </Link>
+          </li>
       </ul>
 
       {/* أزرار الدخول والتسجيل أو الخروج في الديسكتوب */}
