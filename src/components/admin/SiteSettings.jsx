@@ -25,7 +25,7 @@ const SiteSettings = () => {
 
   // الدالة العامة للحصول على التوكن من localStorage
   const getToken = () => {
-    return localStorage.getItem("token");
+    return localStorage.getItem("authToken");
   };
 
   useEffect(() => {

@@ -505,7 +505,7 @@ const CustomOrders = () => {
 
   const fetchOrders = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("authToken");
       const res = await axios.get(
         "https://bakeryproject-1onw.onrender.com/api/custom-orders",
         { headers: { Authorization: `Bearer ${token}` } }
@@ -529,7 +529,7 @@ const CustomOrders = () => {
 
   const updateStatus = async (id, newStatus) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("authToken");
       await axios.put(
         `https://bakeryproject-1onw.onrender.com/api/custom-orders/${id}/status`,
         { status: newStatus },
@@ -552,7 +552,7 @@ const CustomOrders = () => {
 
     try {
       setUpdatingPriceIds((prev) => new Set(prev).add(orderId));
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("authToken");
       await axios.put(
         `https://bakeryproject-1onw.onrender.com/api/custom-orders/${orderId}`,
         { price: priceNum },

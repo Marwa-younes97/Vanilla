@@ -542,7 +542,7 @@ const Offers = () => {
   const [toastType, setToastType] = useState("success");
 
   const getAuthHeaders = () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("authToken");
     return {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,

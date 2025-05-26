@@ -211,7 +211,7 @@ const NotificationDropdown = () => {
       setLoading(true);
       setError("");
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("authToken");
         if (!token) {
           setError("❌ Token not found. Please log in.");
           return;

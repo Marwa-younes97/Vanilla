@@ -4,15 +4,13 @@ import { CartProvider } from './context/CartContext';
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import ScrollToTop from "./components/ScrollToTop"; // ✅ فقط هنا
+import ScrollToTop from "./components/ScrollToTop";
 import WeddingPage from "./components/WeddingPage";
 import BirthdayPage from "./components/BirthdayPage";
 import './App.css';
-
 import AdminDashboard from './components/AdminDashboard';
 
-
-// المكونات التي سيتم تحميلها بشكل Lazy
+// Lazy-loaded components
 const Home = React.lazy(() => import("./pages/Home"));
 const Register = React.lazy(() => import("./components/Register"));
 const Login = React.lazy(() => import("./components/Login"));
@@ -24,43 +22,47 @@ const ProductDetails = React.lazy(() => import("./components/ProductDetails"));
 const Cart = React.lazy(() => import('./components/Cart'));
 const ProductsList = React.lazy(() => import("./components/ProductsList"));
 
-
-function App() {
+function AppContent() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
+
   return (
     <CartProvider>
-      <Router>
-        <ScrollToTop />
-        {/* Navbar يظهر فقط لو مش صفحة أدمن */}
-        {!isAdminRoute && <Navbar />}
-        <Suspense fallback={<div>Loading...</div>}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/SignUp" element={<Register />} />
-            <Route path="/Login" element={<Login />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/blog" element={<Blog />} />
-            <Route path="/recipe/:id" element={<RecipeDetails />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/bread" element={<ProductsList category="Bread" />} />
-            <Route path="/tarts" element={<ProductsList category="Tart" />} />
-            <Route path="/cakes" element={<ProductsList category="Cakes" />} />
-            <Route path="/cookies" element={<ProductsList category="Cookies" />} />
-            <Route path="/pastry" element={<ProductsList category="Pastry" />} />
-            <Route path="/product/:productId" element={<ProductDetails />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/birthday" element={<BirthdayPage />} />
-            <Route path="/wedding" element={<WeddingPage />} />
-            <Route path="/admin/*" element={<AdminDashboard />} />
-          </Routes>
-        </Suspense>
-
-        {/* Footer يظهر فقط لو مش صفحة أدمن */}
-        {!isAdminRoute && <Footer />}
-      </Router>
+      <ScrollToTop />
+      {!isAdminRoute && <Navbar />}
+      <Suspense fallback={<div>Loading...</div>}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/SignUp" element={<Register />} />
+          <Route path="/Login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/blog" element={<Blog />} />
+          <Route path="/recipe/:id" element={<RecipeDetails />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/bread" element={<ProductsList category="Bread" />} />
+          <Route path="/tarts" element={<ProductsList category="Tart" />} />
+          <Route path="/cakes" element={<ProductsList category="Cakes" />} />
+          <Route path="/cookies" element={<ProductsList category="Cookies" />} />
+          <Route path="/pastry" element={<ProductsList category="Pastry" />} />
+          <Route path="/product/:productId" element={<ProductDetails />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/birthday" element={<BirthdayPage />} />
+          <Route path="/wedding" element={<WeddingPage />} />
+          <Route path="/admin/*" element={<AdminDashboard />} />
+        </Routes>
+      </Suspense>
+      {!isAdminRoute && <Footer />}
     </CartProvider>
   );
 }
 
+function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
+  );
+}
+
 export default App;
+

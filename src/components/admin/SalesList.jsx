@@ -6,7 +6,7 @@ const SalesList = () => {
   useEffect(() => {
     const fetchSalesData = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("authToken");
 
         // جلب الطلبات العادية
         const normalOrdersResponse = await fetch("https://bakeryproject-1onw.onrender.com/api/orders", {

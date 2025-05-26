@@ -15,7 +15,7 @@ const Header = () => {
   useEffect(() => {
     const fetchAdminData = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("authToken");
         if (!token) return;
 
         const decodedToken = jwtDecode(token);
@@ -42,7 +42,7 @@ const Header = () => {
     const delayDebounce = setTimeout(async () => {
       if (searchTerm.trim()) {
         try {
-          const token = localStorage.getItem("token");
+          const token = localStorage.getItem("authToken");
           if (!token) return;
 
           // جلب المنتجات

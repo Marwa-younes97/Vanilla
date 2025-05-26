@@ -413,7 +413,7 @@ const ContactMessages = () => {
   // Fetch messages from API
   const fetchMessages = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("authToken");
       if (!token) {
         console.error("Token not found!");
         return;
@@ -444,7 +444,7 @@ const ContactMessages = () => {
   }, []);
 
   const handleDeleteMessage = async (id) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("authToken");
     const response = await fetch(
       `https://bakeryproject-1onw.onrender.com/api/contact/${id}`,
       {
@@ -477,7 +477,7 @@ const ContactMessages = () => {
   };
 
   const handleSendReply = async () => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("authToken");
     if (!responseText.trim()) return;
 
     try {
