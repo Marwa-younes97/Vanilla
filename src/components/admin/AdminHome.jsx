@@ -46,7 +46,7 @@ const AdminHome = () => {
   useEffect(() => {
     const fetchOrdersData = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("authToken");
         const response = await axios.get(
           "https://bakeryproject-1onw.onrender.com/api/orders",
           {

@@ -505,7 +505,7 @@ const CustomOrders = () => {
 
   const fetchOrders = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("authToken");
       const res = await axios.get(
         "https://bakeryproject-1onw.onrender.com/api/custom-orders",
         { headers: { Authorization: `Bearer ${token}` } }

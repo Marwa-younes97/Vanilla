@@ -242,7 +242,7 @@ const OrdersList = () => {
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("authToken");
       await fetch(
         `https://bakeryproject-1onw.onrender.com/api/orders/${orderId}`,
         {

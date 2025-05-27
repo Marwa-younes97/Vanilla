@@ -19,7 +19,7 @@ const ProductList = () => {
   const [toastType, setToastType] = useState("success");
   const [offerFilter, setOfferFilter] = useState(""); // "", "on", "off"
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("authToken");
 
   const sortLabels = {
     nameAsc: "Name (A-Z)",

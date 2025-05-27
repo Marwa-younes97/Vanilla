@@ -413,7 +413,7 @@ const ContactMessages = () => {
   // Fetch messages from API
   const fetchMessages = async () => {
     try {
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("authToken");
       if (!token) {
         console.error("Token not found!");
         return;

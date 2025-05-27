@@ -51,7 +51,7 @@ const AddProduct = () => {
       availability,
     };
 
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("authToken");
 
     if (!token) {
       showToast("You must be logged in to add a product.", "error");

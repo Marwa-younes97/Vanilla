@@ -15,7 +15,7 @@ const Header = () => {
   useEffect(() => {
     const fetchAdminData = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("authToken");
         if (!token) return;
 
         const decodedToken = jwtDecode(token);
