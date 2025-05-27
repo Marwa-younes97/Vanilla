@@ -1,6 +1,7 @@
 import React, { Suspense } from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { CartProvider } from './context/CartContext';
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { CartProvider } from "./context/CartContext";
+import { FavoritesProvider } from "./context/FavoritesContext";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -9,11 +10,11 @@ import Footer from "./components/Footer";
 import ScrollToTop from "./components/ScrollToTop";
 import WeddingPage from "./components/WeddingPage";
 import BirthdayPage from "./components/BirthdayPage";
-import './App.css';
+import AdminDashboard from "./components/AdminDashboard";
+import Favorites from "./components/Favorites";
 
-import AdminDashboard from './components/AdminDashboard';
+import "./App.css";
 
-// Lazy loaded components
 const Home = React.lazy(() => import("./pages/Home"));
 const Register = React.lazy(() => import("./components/Register"));
 const Login = React.lazy(() => import("./components/Login"));
@@ -22,15 +23,15 @@ const Blog = React.lazy(() => import("./components/Blog"));
 const RecipeDetails = React.lazy(() => import("./components/RecipeDetails"));
 const About = React.lazy(() => import("./components/About"));
 const ProductDetails = React.lazy(() => import("./components/ProductDetails"));
-const Cart = React.lazy(() => import('./components/Cart'));
+const Cart = React.lazy(() => import("./components/Cart"));
 const ProductsList = React.lazy(() => import("./components/ProductsList"));
 
-function AppRoutes() {
+function AppContent() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
 
   return (
-    <>
+    <CartProvider>
       <ScrollToTop />
       {!isAdminRoute && <Navbar />}
       <Suspense fallback={<div>Loading...</div>}>
@@ -52,21 +53,22 @@ function AppRoutes() {
           <Route path="/birthday" element={<BirthdayPage />} />
           <Route path="/wedding" element={<WeddingPage />} />
           <Route path="/admin/*" element={<AdminDashboard />} />
+          <Route path="/favorites" element={<Favorites />} />
         </Routes>
       </Suspense>
       {!isAdminRoute && <Footer />}
-      <ToastContainer /> {/* ✔️ لازم تكون هنا عشان تشتغل التنبيهات */}
-    </>
+      <ToastContainer /> {/* لازم تكون هنا عشان التنبيهات تشتغل */}
+    </CartProvider>
   );
 }
 
 function App() {
   return (
-    <Router>
-      <CartProvider>
-        <AppRoutes />
-      </CartProvider>
-    </Router>
+    <FavoritesProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </FavoritesProvider>
   );
 }
 
