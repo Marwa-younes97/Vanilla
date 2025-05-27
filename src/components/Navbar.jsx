@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { FaHeart } from "react-icons/fa";
 
+
 const Navbar = () => {
   const { getCartCount } = useCart();
   const [showLogin, setShowLogin] = useState(false);

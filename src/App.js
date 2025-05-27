@@ -11,6 +11,7 @@ import './App.css';
 import AdminDashboard from './components/AdminDashboard';
 import Favorites from './components/Favorites';
 import { FavoritesProvider } from './context/FavoritesContext';
+import Contact from "./components/Contact";
 
 // Lazy-loaded components
 const Home = React.lazy(() => import("./pages/Home"));
@@ -52,6 +53,8 @@ function AppContent() {
           <Route path="/wedding" element={<WeddingPage />} />
           <Route path="/admin/*" element={<AdminDashboard />} />
           <Route path="/favorites" element={<Favorites />} />
+          <Route path="/contact" element={<Contact />} />
+
         </Routes>
       </Suspense>
       {!isAdminRoute && <Footer />}
