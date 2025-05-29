@@ -3,16 +3,39 @@ import { useParams, useNavigate } from "react-router-dom";
 import { FaStar, FaRegStar } from "react-icons/fa";
 import { toast } from "react-toastify";
 
+// دالة لفك شفرة JWT
+function parseJwt(token) {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  } catch {
+    return null;
+  }
+}
+
 const ProductDetails = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
+
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [newRating, setNewRating] = useState(0);
   const [newComment, setNewComment] = useState("");
+  const [userInfo, setUserInfo] = useState(null);
 
   const token = localStorage.getItem("authToken");
 
+  const userData = parseJwt(token);
+  const userId = userData?.id;
+
+  // جلب بيانات المنتج
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -31,12 +54,37 @@ const ProductDetails = () => {
     fetchProduct();
   }, [productId]);
 
+  // جلب بيانات المستخدم
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      if (!userId || !token) return;
+
+      try {
+        const response = await fetch(`https://bakeryproject-1onw.onrender.com/api/users/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await response.json();
+        setUserInfo(data);
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+      }
+    };
+
+    fetchUserInfo();
+  }, [userId, token]);
+
+  // إرسال الريفيو
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
     if (!newRating || !newComment) {
       toast.error("Please enter a rating and comment");
       return;
     }
+
+    const userName = userInfo?.name || userInfo?.email || "Anonymous";
 
     try {
       const response = await fetch(
@@ -47,7 +95,7 @@ const ProductDetails = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ rating: newRating, comment: newComment }),
+          body: JSON.stringify({ rating: newRating, comment: newComment, name: userName }),
         }
       );
 
@@ -129,45 +177,43 @@ const ProductDetails = () => {
         </div>
       </div>
 
-      {/* Reviews Section */}
-{product.reviews?.length > 0 && (
-  <div className="mt-10">
-    <h3 className="text-2xl font-semibold mb-4">User Reviews</h3>
-    <ul className="space-y-6">
-      {product.reviews.map((review) => (
-        <li
-          key={review._id}
-          className="bg-gray-50 p-5 rounded-xl shadow-md border border-gray-200"
-        >
-          <div className="flex items-center mb-3">
-            <div className="w-10 h-10 rounded-full bg-pink-600 flex items-center justify-center text-white font-bold text-lg mr-3 select-none">
-              {/* أول حرف من الاسم أو A */}
-              {(review.user?.name || review.name || "Anonymous").charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <p className="font-semibold text-gray-900">
-              <p className="font-semibold text-pink-600 mb-1">{review.user?.name || "Anonymous"}</p>
-              </p>
-              <div className="flex items-center mt-1">
-                {Array.from({ length: 5 }).map((_, index) =>
-                  index < review.rating ? (
-                    <FaStar key={index} className="text-yellow-400" />
-                  ) : (
-                    <FaRegStar key={index} className="text-gray-300" />
-                  )
-                )}
-              </div>
-            </div>
-          </div>
-          <p className="text-gray-700 text-base leading-relaxed">{review.comment}</p>
-        </li>
-      ))}
-    </ul>
-  </div>
-)}
+      {/* Reviews */}
+      {product.reviews?.length > 0 && (
+        <div className="mt-10">
+          <h3 className="text-2xl font-semibold mb-4">User Reviews</h3>
+          <ul className="space-y-6">
+            {product.reviews.map((review) => (
+              <li
+                key={review._id}
+                className="bg-gray-50 p-5 rounded-xl shadow-md border border-gray-200"
+              >
+                <div className="flex items-center mb-3">
+                  <div className="w-10 h-10 rounded-full bg-pink-600 flex items-center justify-center text-white font-bold text-lg mr-3 select-none">
+                    {(review.user?.name || review.name || "A").charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-pink-600 mb-1">
+                      {review.user?.name || review.name || "Anonymous"}
+                    </p>
+                    <div className="flex items-center mt-1">
+                      {Array.from({ length: 5 }).map((_, index) =>
+                        index < review.rating ? (
+                          <FaStar key={index} className="text-yellow-400" />
+                        ) : (
+                          <FaRegStar key={index} className="text-gray-300" />
+                        )
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <p className="text-gray-700 text-base leading-relaxed">{review.comment}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
-
-      {/* Submit Review */}
+      {/* Add Review */}
       <div className="mt-10">
         <h3 className="text-xl font-semibold mb-2">Leave a Review</h3>
         <form

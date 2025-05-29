@@ -12,6 +12,7 @@ import WeddingPage from "./components/WeddingPage";
 import BirthdayPage from "./components/BirthdayPage";
 import AdminDashboard from "./components/AdminDashboard";
 import Favorites from "./components/Favorites";
+import Contact from "./components/Contact";
 
 import "./App.css";
 
@@ -37,8 +38,6 @@ function AppContent() {
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/SignUp" element={<Register />} />
-          <Route path="/Login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/recipe/:id" element={<RecipeDetails />} />
@@ -54,6 +53,7 @@ function AppContent() {
           <Route path="/wedding" element={<WeddingPage />} />
           <Route path="/admin/*" element={<AdminDashboard />} />
           <Route path="/favorites" element={<Favorites />} />
+          <Route path="/contact" element={<Contact />} />
         </Routes>
       </Suspense>
       {!isAdminRoute && <Footer />}
