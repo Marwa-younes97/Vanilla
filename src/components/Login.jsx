@@ -28,14 +28,6 @@ const Login = () => {
       });
 
       if (response.data.token) {
-<<<<<<< HEAD
-        console.log("Token stored:", response.data.token);
-        localStorage.setItem('authToken', response.data.token);
-
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 500);
-=======
         localStorage.setItem("authToken", response.data.token);
 
         // فك تشفير التوكن لمعرفة الدور
@@ -48,7 +40,6 @@ const Login = () => {
         } else {
           window.location.href = "/";
         }
->>>>>>> e3374854547ad3efe98c3cc5c07b53b4e4d9c05a
       } else {
         setError(response.data.message || 'Login failed. Please try again.');
       }
