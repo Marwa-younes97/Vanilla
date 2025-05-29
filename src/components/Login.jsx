@@ -27,15 +27,28 @@ const Login = () => {
         password,
       });
 
-      console.log("Login response:", response.data);
-
       if (response.data.token) {
+<<<<<<< HEAD
         console.log("Token stored:", response.data.token);
         localStorage.setItem('authToken', response.data.token);
 
         setTimeout(() => {
           window.location.href = '/';
         }, 500);
+=======
+        localStorage.setItem("authToken", response.data.token);
+
+        // فك تشفير التوكن لمعرفة الدور
+        const decodedToken = jwtDecode(response.data.token);
+        const userRole = decodedToken.role;
+
+        // توجيه حسب الدور
+        if (userRole === "admin") {
+          window.location.href = "/admin/";
+        } else {
+          window.location.href = "/";
+        }
+>>>>>>> e3374854547ad3efe98c3cc5c07b53b4e4d9c05a
       } else {
         setError(response.data.message || 'Login failed. Please try again.');
       }
@@ -98,7 +111,7 @@ const Login = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     placeholder="Enter your password"
-                    className="text-black  w-full p-4 border border-gray-300 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                    className="text-black w-full p-4 border border-gray-300 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
                   />
                 </div>
 
@@ -142,3 +155,4 @@ const Login = () => {
 };
 
 export default Login;
+

@@ -4,6 +4,7 @@ import SignUp from "../components/Register";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 
+
 const Navbar = () => {
   const { getCartCount } = useCart();
   const [showLogin, setShowLogin] = useState(false);

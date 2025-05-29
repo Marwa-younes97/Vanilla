@@ -77,7 +77,7 @@ const Contact = () => {
             </h3>
           </div>
           <p className="text-pink-400 text-base mb-3">
-            We are available , 5 days a week.
+            We are available , 7 days a week.
           </p>
           <p className="text-pink-800 font-semibold text-lg tracking-wide">
             Phone: +88061112222
