@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { FaHeart } from "react-icons/fa";
 
-
 const Navbar = () => {
   const { getCartCount } = useCart();
   const [showLogin, setShowLogin] = useState(false);
@@ -65,12 +64,32 @@ const Navbar = () => {
         aria-label="Toggle menu"
       >
         {menuOpen ? (
-          <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          <svg
+            className="w-8 h-8"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         ) : (
-          <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          <svg
+            className="w-8 h-8"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
           </svg>
         )}
       </button>
@@ -78,40 +97,60 @@ const Navbar = () => {
       {/* القائمة الرئيسية - تظهر في الديسكتوب */}
       <ul className="hidden md:flex space-x-8 font-medium text-lg">
         <li>
-          <Link to="/" className="hover:text-yellow-400 transition duration-300">
+          <Link
+            to="/"
+            className="hover:text-yellow-400 transition duration-300"
+          >
             Home
           </Link>
         </li>
         <li>
-          <Link to="/blog" className="hover:text-yellow-400 transition duration-300">
+          <Link
+            to="/blog"
+            className="hover:text-yellow-400 transition duration-300"
+          >
             Blog
           </Link>
         </li>
         <li>
-          <Link to="/contact" className="hover:text-yellow-400 transition duration-300">
+          <Link
+            to="/contact"
+            className="hover:text-yellow-400 transition duration-300"
+          >
             Contact Us
           </Link>
         </li>
         <li>
-          <Link to="/about" className="hover:text-yellow-400 transition duration-300">
+          <Link
+            to="/about"
+            className="hover:text-yellow-400 transition duration-300"
+          >
             About Us
           </Link>
         </li>
         <li>
-          <Link to="/cart" className="hover:text-yellow-400 transition duration-300 flex items-center">
-            <i className="bi bi-cart-fill mr-1" style={{ fontSize: "19px" }}></i>
-            <span className="text-lg text-pink-600">{getCartCount() > 0 ? getCartCount() : ""}</span>
+          <Link
+            to="/cart"
+            className="hover:text-yellow-400 transition duration-300 flex items-center"
+          >
+            <i
+              className="bi bi-cart-fill mr-1"
+              style={{ fontSize: "19px" }}
+            ></i>
+            <span className="text-lg text-pink-600">
+              {getCartCount() > 0 ? getCartCount() : ""}
+            </span>
           </Link>
         </li>
-                  <li>
-            <Link
-              to="/favorites"
-              className="flex items-center gap-2 hover:text-yellow-400 transition relative"
-            >
-              <FaHeart />
-              {/* يمكنك إضافة عداد المفضلة لاحقًا هنا إن أردت */}
-            </Link>
-          </li>
+        <li>
+          <Link
+            to="/favorites"
+            className="flex items-center gap-2 hover:text-yellow-400 transition relative"
+          >
+            <FaHeart />
+            {/* يمكنك إضافة عداد المفضلة لاحقًا هنا إن أردت */}
+          </Link>
+        </li>
       </ul>
 
       {/* أزرار الدخول والتسجيل أو الخروج في الديسكتوب */}
@@ -133,11 +172,13 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            <img
-              src="/user-avatar.png"
-              alt="User"
-              className="w-10 h-10 rounded-full border-2 border-white"
-            />
+            <Link to="/user">
+              <img
+                src="/user-avatar.png"
+                alt="User"
+                className="w-10 h-10 rounded-full border-2 border-white cursor-pointer"
+              />
+            </Link>
             <button
               onClick={handleLogout}
               className="bg-pink-700 text-white px-5 py-2 rounded-md font-semibold hover:bg-white hover:text-pink-700 transition"
@@ -194,8 +235,13 @@ const Navbar = () => {
                 onClick={() => setMenuOpen(false)}
                 className="hover:text-yellow-400 transition duration-300 flex items-center"
               >
-                <i className="bi bi-cart-fill mr-1" style={{ fontSize: "19px" }}></i>
-                <span className="text-lg text-pink-600">{getCartCount() > 0 ? getCartCount() : ""}</span>
+                <i
+                  className="bi bi-cart-fill mr-1"
+                  style={{ fontSize: "19px" }}
+                ></i>
+                <span className="text-lg text-pink-600">
+                  {getCartCount() > 0 ? getCartCount() : ""}
+                </span>
               </Link>
             </li>
           </ul>
@@ -219,11 +265,14 @@ const Navbar = () => {
             ) : (
               <>
                 <div className="flex items-center space-x-4">
-                  <img
-                    src="/user-avatar.png"
-                    alt="User"
-                    className="w-10 h-10 rounded-full border-2 border-white"
-                  />
+                  <Link to="/user">
+                    <img
+                      src="/user-avatar.png"
+                      alt="User"
+                      className="w-10 h-10 rounded-full border-2 border-white cursor-pointer"
+                    />
+                  </Link>
+
                   <button
                     onClick={handleLogout}
                     className="bg-pink-700 text-white px-5 py-2 rounded-md font-semibold hover:bg-white hover:text-pink-700 transition flex-1"
