@@ -13,6 +13,7 @@ import BirthdayPage from "./components/BirthdayPage";
 import AdminDashboard from "./components/AdminDashboard";
 import Favorites from "./components/Favorites";
 import Contact from "./components/Contact";
+import User from "./components/User";
 
 import "./App.css";
 
@@ -54,6 +55,9 @@ function AppContent() {
           <Route path="/admin/*" element={<AdminDashboard />} />
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/user" element={<User />} />
+
+
         </Routes>
       </Suspense>
       {!isAdminRoute && <Footer />}
