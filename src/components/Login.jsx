@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import ForgotPassword from './ForgotPassword';
+import { jwtDecode } from 'jwt-decode';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -13,7 +14,7 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    if (email === '' || password === '') {
+    if (email.trim() === '' || password.trim() === '') {
       setError('Both fields are required');
       return;
     }
@@ -119,7 +120,7 @@ const Login = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className={`w-full ${loading ? 'bg-gray-400' : 'bg-pink-600'} text-white p-4 rounded-md hover:bg-pink-700 transition-colors duration-300`}
+                  className={`w-full ${loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-pink-600'} text-white p-4 rounded-md hover:bg-pink-700 transition-colors duration-300`}
                 >
                   {loading ? 'Logging in...' : 'Login'}
                 </button>
@@ -146,4 +147,3 @@ const Login = () => {
 };
 
 export default Login;
-
