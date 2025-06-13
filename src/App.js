@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React, { Suspense, useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { CartProvider } from "./context/CartContext";
 import { FavoritesProvider } from "./context/FavoritesContext";
@@ -15,11 +15,14 @@ import Favorites from "./components/Favorites";
 import Contact from "./components/Contact";
 import User from "./components/User";
 
+import Login from "./components/Login";
+import SignUp from "./components/Register";
+import OrderSuccess from "./components/OrderSuccess";
+import OrderCancel from "./components/OrderCancel";
+
 import "./App.css";
 
 const Home = React.lazy(() => import("./pages/Home"));
-const Register = React.lazy(() => import("./components/Register"));
-const Login = React.lazy(() => import("./components/Login"));
 const ForgotPassword = React.lazy(() => import("./components/ForgotPassword"));
 const Blog = React.lazy(() => import("./components/Blog"));
 const RecipeDetails = React.lazy(() => import("./components/RecipeDetails"));
@@ -32,10 +35,46 @@ function AppContent() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
 
+  // States for modals and auth
+  const [showLogin, setShowLogin] = useState(false);
+  const [showSignUp, setShowSignUp] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    setIsLoggedIn(!!token);
+  }, []);
+
+  const handleLoginClick = () => {
+    setShowLogin(true);
+    setShowSignUp(false);
+  };
+
+  const handleSignUpClick = () => {
+    setShowSignUp(true);
+    setShowLogin(false);
+  };
+
+  const closeModal = () => {
+    setShowLogin(false);
+    setShowSignUp(false);
+    const token = localStorage.getItem("authToken");
+    setIsLoggedIn(!!token);
+  };
+
   return (
     <CartProvider>
       <ScrollToTop />
-      {!isAdminRoute && <Navbar />}
+      {!isAdminRoute && !showLogin && !showSignUp && (
+  <Navbar
+    onLoginClick={handleLoginClick}
+    onSignUpClick={handleSignUpClick}
+    isLoggedIn={isLoggedIn}
+    setIsLoggedIn={setIsLoggedIn}
+  />
+)}
+
+
       <Suspense fallback={<div>Loading...</div>}>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -56,12 +95,21 @@ function AppContent() {
           <Route path="/favorites" element={<Favorites />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/user" element={<User />} />
-
-
+          <Route path="/order-success" element={<OrderSuccess />} />
+<Route path="/order-cancel" element={<OrderCancel />} />
         </Routes>
       </Suspense>
+
+      {/* Modals for Login and SignUp */}
+      {showLogin && (
+        <Login onClose={closeModal} onSignUpClick={handleSignUpClick} setIsLoggedIn={setIsLoggedIn} />
+      )}
+      {showSignUp && (
+        <SignUp onClose={closeModal} onLoginClick={handleLoginClick} setIsLoggedIn={setIsLoggedIn} />
+      )}
+
       {!isAdminRoute && <Footer />}
-      <ToastContainer /> {/* لازم تكون هنا عشان التنبيهات تشتغل */}
+      <ToastContainer />
     </CartProvider>
   );
 }
