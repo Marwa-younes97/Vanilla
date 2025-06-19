@@ -43,7 +43,7 @@ const ProductCard = ({ product }) => {
 
   return (
     <div
-      className="bg-white border rounded-2xl shadow-sm p-4 w-[300px] h-[400px] max-w-xs overflow-hidden 
+      className="bg-white border rounded-2xl shadow-sm p-4 w-full max-w-xs h-auto max-w-xs overflow-hidden 
                  transition duration-300 transform hover:-translate-y-1 hover:shadow-[0px 4px 10px rgba(236, 72, 153, 0.6)] cursor-pointer"
       onClick={handleCardClick}
     >

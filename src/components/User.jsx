@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import UserNotifications from "./UserNotifications";
+import Favorites from "./Favorites";
+
 
 import {
   Pencil,
@@ -258,21 +260,16 @@ export default function UserProfile() {
               //   id: "help",
               // },
             ].map(({ label, icon, id }) => (
-              <button
-                key={id}
-                onClick={() => {
-                  if (id === "favorites") {
-                    navigate("/favorites"); // ✅ التوجيه هنا
-                  } else {
-                    setActiveTab(id);
-                  }
-                }}
-                className={`flex items-center gap-3 font-medium cursor-pointer bg-transparent border-none p-0 ${
-                  activeTab === id ? "text-pink-600" : "text-black"
-                }`}
-              >
-                {icon} {label}
-              </button>
+<button
+  key={id}
+  onClick={() => setActiveTab(id)}
+  className={`flex items-center gap-3 font-medium cursor-pointer bg-transparent border-none p-0 ${
+    activeTab === id ? "text-pink-600" : "text-black"
+  }`}
+>
+  {icon} {label}
+</button>
+
             ))}
           </nav>
         </div>
@@ -417,14 +414,11 @@ export default function UserProfile() {
           </div>
         )} */}
 
-        {activeTab === "notifications" && (
-          <div>
-            <h2 className="text-2xl font-bold mb-4 text-black">
-              Notifications
-            </h2>
-            <UserNotifications />
-          </div>
-        )}
+{activeTab === "favorites" && (
+  <div className="mt-4">
+    <Favorites />
+  </div>
+)}
 
         {/* {activeTab === "activity" && (
           <div>
