@@ -6,6 +6,7 @@ import { useCart } from "../context/CartContext";
 import { FaHeart } from "react-icons/fa";
 import {jwtDecode} from "jwt-decode";  // تصحيح الاستيراد من jwt-decode
 import axios from "axios";
+import { useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const { getCartCount } = useCart();
@@ -69,6 +70,12 @@ const Navbar = () => {
     setShowLogin(false);
     setShowSignUp(false);
   };
+const location = useLocation();
+const hideNavbar = location.pathname === "/user" || location.pathname === "/favorites";
+
+if (hideNavbar) {
+  return null; // لا تعرض الـ Navbar
+}
 
   return (
     <nav className="Nav-height fixed top-0 left-0 w-full z-50 bg-black bg-opacity-90 text-white px-6 py-4 flex items-center justify-between">
@@ -114,11 +121,11 @@ const Navbar = () => {
             <span className="text-lg text-pink-600">{getCartCount() > 0 ? getCartCount() : ""}</span>
           </Link>
         </li>
-        <li>
+        {/* <li>
           <Link to="/favorites" className="flex items-center gap-2 hover:text-yellow-400 relative">
             <FaHeart />
           </Link>
-        </li>
+        </li> */}
       </ul>
 
       {/* أزرار الحساب */}
