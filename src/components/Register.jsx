@@ -68,10 +68,10 @@ const Register = ({ onClose, onLoginClick }) => {
   };
 
   return (
-<div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-[9999] px-4">
-      <div className="w-full max-w-lg bg-white rounded-lg shadow-lg overflow-hidden flex flex-col relative bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
-        <div className="w-full p-8 relative bg-white bg-opacity-90 rounded-lg">
-          <div className="absolute top-2 right-2">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 px-4">
+<div className="bg-white rounded-xl shadow-lg max-w-lg w-full h-auto flex flex-col relative overflow-hidden bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
+      <div className="w-full p-8 relative bg-white bg-opacity-90 rounded-lg">
+        <div className="absolute top-2 right-2">
             <button onClick={onClose} className="text-gray-700 text-2xl font-bold hover:text-gray-900">
               &times;
             </button>
