@@ -6,11 +6,7 @@ import { FaMinus, FaPlus, FaTrash } from 'react-icons/fa';
 const Cart = () => {
   const { cart, removeFromCart, updateQuantity, clearCart } = useCart();
   const [relatedProducts, setRelatedProducts] = useState([]);
-<<<<<<< HEAD
-  const [currentCategory, setCurrentCategory] = useState("");
-=======
   const [currentCategory, setCurrentCategory] = useState('');
->>>>>>> 4cf157889e5f57e39a042238f8f54033efe25ad5
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,10 +36,6 @@ const Cart = () => {
   };
 
   const handleCheckout = async () => {
-<<<<<<< HEAD
-    const fakeOrderId = "680bed9f9e93813cd0bd6297";
-=======
->>>>>>> 4cf157889e5f57e39a042238f8f54033efe25ad5
     const token = localStorage.getItem("authToken");
 
     if (!token) {
@@ -52,36 +44,6 @@ const Cart = () => {
     }
 
     try {
-<<<<<<< HEAD
-      const response = await fetch(
-        `https://bakeryproject-1onw.onrender.com/api/payments/create-payment/${fakeOrderId}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        console.error(`HTTP Error: ${response.status}`);
-        const errorText = await response.text();
-        console.error("Response body:", errorText);
-        alert("Something went wrong with the payment API.");
-        return;
-      }
-      const data = await response.json();
-
-      if (data?.approvalUrl) {
-        window.open(data.approvalUrl, "_blank");
-      } else {
-        alert("Error getting payment link.");
-        console.error("Invalid response:", data);
-      }
-    } catch (error) {
-      console.error("Checkout error:", error);
-      alert("An error occurred during the payment process.");
-=======
       // Step 1: Create order
       const orderResponse = await fetch("https://bakeryproject-1onw.onrender.com/api/orders", {
         method: "POST",
@@ -127,19 +89,12 @@ const Cart = () => {
     } catch (error) {
       console.error("Checkout error:", error);
       alert("An error occurred during checkout.");
->>>>>>> 4cf157889e5f57e39a042238f8f54033efe25ad5
     }
   };
 
   return (
     <div className="cart-container pt-32 py-8 px-4 bg-gray-50 min-h-screen">
-<<<<<<< HEAD
-      <h2 className="text-3xl font-bold text-pink-600 text-center mb-8">
-        Your Cart
-      </h2>
-=======
       <h2 className="text-3xl font-bold text-pink-600 text-center mb-8">Your Cart</h2>
->>>>>>> 4cf157889e5f57e39a042238f8f54033efe25ad5
 
       {cart.length === 0 ? (
         <p className="text-center text-xl text-gray-500">Your cart is empty!</p>
@@ -151,54 +106,21 @@ const Cart = () => {
               className="cart-item bg-white p-4 mb-6 rounded-lg shadow-md hover:scale-105 transition-transform duration-300"
             >
               <div className="flex items-center justify-between">
-<<<<<<< HEAD
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-24 h-24 object-cover rounded-lg"
-                />
-=======
                 <img src={product.image} alt={product.name} className="w-24 h-24 object-cover rounded-lg" />
->>>>>>> 4cf157889e5f57e39a042238f8f54033efe25ad5
                 <div className="ml-4 flex-grow">
                   <h3 className="text-lg font-semibold">{product.name}</h3>
                   <p className="text-sm text-gray-600">${product.price}</p>
                   <div className="flex items-center mt-2">
-<<<<<<< HEAD
-                    <button
-                      onClick={() =>
-                        handleQuantityChange(product._id, product.quantity - 1)
-                      }
-                      className="bg-gray-200 p-2 rounded-full text-gray-600 hover:bg-gray-300"
-                    >
-                      <FaMinus />
-                    </button>
-                    <span className="mx-2 text-lg">{product.quantity}</span>
-                    <button
-                      onClick={() =>
-                        handleQuantityChange(product._id, product.quantity + 1)
-                      }
-                      className="bg-gray-200 p-2 rounded-full text-gray-600 hover:bg-gray-300"
-                    >
-=======
                     <button onClick={() => handleQuantityChange(product._id, product.quantity - 1)} className="bg-gray-200 p-2 rounded-full text-gray-600 hover:bg-gray-300">
                       <FaMinus />
                     </button>
                     <span className="mx-2 text-lg">{product.quantity}</span>
                     <button onClick={() => handleQuantityChange(product._id, product.quantity + 1)} className="bg-gray-200 p-2 rounded-full text-gray-600 hover:bg-gray-300">
->>>>>>> 4cf157889e5f57e39a042238f8f54033efe25ad5
                       <FaPlus />
                     </button>
                   </div>
                 </div>
-<<<<<<< HEAD
-                <button
-                  onClick={() => removeFromCart(product._id)}
-                  className="text-red-500 hover:text-red-700"
-                >
-=======
                 <button onClick={() => removeFromCart(product._id)} className="text-red-500 hover:text-red-700">
->>>>>>> 4cf157889e5f57e39a042238f8f54033efe25ad5
                   <FaTrash />
                 </button>
               </div>
@@ -220,23 +142,10 @@ const Cart = () => {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-end pt-4">
-<<<<<<< HEAD
-              <button
-                onClick={clearCart}
-                className="w-full sm:w-60 bg-gray-300 text-gray-800 font-bold py-2 rounded-lg hover:bg-gray-400"
-              >
-                Clear Cart
-              </button>
-              <button
-                onClick={handleCheckout}
-                className="w-full sm:w-60 bg-pink-600 text-white font-bold py-2 rounded-lg hover:bg-pink-700"
-              >
-=======
               <button onClick={clearCart} className="w-full sm:w-60 bg-gray-300 text-gray-800 font-bold py-2 rounded-lg hover:bg-gray-400">
                 Clear Cart
               </button>
               <button onClick={handleCheckout} className="w-full sm:w-60 bg-pink-600 text-white font-bold py-2 rounded-lg hover:bg-pink-700">
->>>>>>> 4cf157889e5f57e39a042238f8f54033efe25ad5
                 Pay Now
               </button>
             </div>
@@ -249,29 +158,11 @@ const Cart = () => {
           <h3 className="text-2xl font-semibold mb-4">Related Products</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {filteredProducts.map((product) => (
-<<<<<<< HEAD
-              <div
-                key={product._id}
-                className="product-card bg-white shadow-md rounded-xl p-4 transition duration-300 transform hover:-translate-y-2 hover:shadow-[0_4px_20px_rgba(255,0,179,0.5)] cursor-pointer"
-                onClick={() => navigate(`/product/${product._id}`)}
-              >
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-32 object-cover rounded-lg mb-4"
-                />
-                <h4 className="text-lg font-semibold mb-2">{product.name}</h4>
-                <p className="text-sm text-gray-500 mb-2">
-                  {product.description.length > 100
-                    ? product.description.substring(0, 100) + "..."
-                    : product.description}
-=======
               <div key={product._id} className="product-card bg-white shadow-md rounded-xl p-4 transition duration-300 transform hover:-translate-y-2 hover:shadow-[0_4px_20px_rgba(255,0,179,0.5)] cursor-pointer" onClick={() => navigate(`/product/${product._id}`)}>
                 <img src={product.image} alt={product.name} className="w-full h-32 object-cover rounded-lg mb-4" />
                 <h4 className="text-lg font-semibold mb-2">{product.name}</h4>
                 <p className="text-sm text-gray-500 mb-2">
                   {product.description.length > 100 ? product.description.substring(0, 100) + "..." : product.description}
->>>>>>> 4cf157889e5f57e39a042238f8f54033efe25ad5
                 </p>
                 <p className="text-lg text-pink-700 mb-3">${product.price}</p>
                 <button
