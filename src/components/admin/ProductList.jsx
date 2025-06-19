@@ -4,7 +4,6 @@ import Toast from "./Toast"; // استيراد مكون التوست
 // import { FaSearch } from "react-icons/fa";
 import Select from "react-select";
 
-
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -270,7 +269,7 @@ const ProductList = () => {
       </div>
       {/* Table */}
       <div className="table-s overflow-x-auto rounded shadow-md border border-gray-200">
-        <table className="table min-w-full bg-white text-sm text-gray-800">
+        <table className="table min-w-[1500px] bg-white text-sm text-gray-800">
           <thead className="bg-pink-100 text-pink-800">
             <tr>
               <th className="py-3 px-4">#</th>
@@ -305,8 +304,8 @@ const ProductList = () => {
                 <td className="py-3 px-4 text-center">{product.price} EGP</td>
                 <td className="py-3 px-4 text-center">{product.category}</td>
                 <td className="py-3 px-4 text-xs max-w-xs overflow-hidden">
-                  {product.description.length > 50
-                    ? `${product.description.slice(0, 50)}...`
+                  {product.description.length > 60
+                    ? `${product.description.slice(0, 60)}...`
                     : product.description}
                 </td>
 
@@ -344,7 +343,7 @@ const ProductList = () => {
                     </button>
                     <button
                       onClick={() => handleDelete(product._id)}
-                      className="flex items-center gap-1 bg-gray-600 hover:bg-red-700 text-white text-xs py-1 px-2 rounded"
+                      className="flex items-center gap-1 bg-gray-600 hover:bg-gray-700 text-white text-xs py-1 px-2 rounded"
                     >
                       <FaTrash /> Delete
                     </button>
@@ -387,155 +386,15 @@ const ProductList = () => {
       {/* Toast Notification */}
       <Toast message={toastMessage} visible={toastVisible} type={toastType} />
       Edit Modal
-      {/* {selectedProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="scroll bg-white p-6 rounded-lg shadow-lg w-96 relative">
-            <button
-              onClick={() => setSelectedProduct(null)}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-            >
-              ✖️
-            </button>
-            <h3 className="text-2xl font-bold mb-6 text-pink-700 text-center">
-              Edit Product
-            </h3>
-            <div className="overflow-y-auto max-h-[50px]">
-              {" "}
-              <form onSubmit={handleUpdateProduct}>
-                <div className="mb-4">
-                  <label className="block mb-2 text-gray-700 font-semibold">
-                    Product Name:
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={editedProduct.name || ""}
-                    onChange={handleChange}
-                    className="border p-2 rounded w-full focus:outline-pink-400"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block mb-2 text-gray-700 font-semibold">
-                    Price:
-                  </label>
-                  <input
-                    type="number"
-                    name="price"
-                    value={editedProduct.price || ""}
-                    onChange={handleChange}
-                    className="border p-2 rounded w-full focus:outline-pink-400"
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block mb-2 text-gray-700 font-semibold">
-                    Category:
-                  </label>
-                  <select
-                    name="category"
-                    value={editedProduct.category || ""}
-                    onChange={handleChange}
-                    className="border p-2 rounded w-full focus:outline-pink-400"
-                  >
-                    <option value="">Select a category</option>
-                    {uniqueCategories.map((cat) => (
-                      <option key={cat} value={cat}>
-                        {cat}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="mb-4">
-                  <label className="block mb-2 text-gray-700 font-semibold">
-                    Availability:
-                  </label>
-                  <select
-                    name="availability"
-                    value={editedProduct.availability}
-                    onChange={handleChange}
-                    className="border p-2 rounded w-full focus:outline-pink-400"
-                  >
-                    <option value={true}>Available</option>
-                    <option value={false}>Unavailable</option>
-                  </select>
-                </div>
-                <div className="mb-4">
-                  <label className="block mb-2 text-gray-700 font-semibold">
-                    Description:
-                  </label>
-                  <textarea
-                    name="description"
-                    value={editedProduct.description || ""}
-                    onChange={handleChange}
-                    className="border p-2 rounded w-full focus:outline-pink-400"
-                    rows={4}
-                  />
-                </div>
-                <div className="mb-4">
-                  <label className="block mb-2 text-gray-700 font-semibold">
-                    Is On Sale:
-                  </label>
-                  <select
-                    name="offer.isOnSale"
-                    value={editedProduct.offer?.isOnSale ?? false}
-                    onChange={(e) =>
-                      setEditedProduct((prev) => ({
-                        ...prev,
-                        offer: {
-                          ...prev.offer,
-                          isOnSale: e.target.value === "true",
-                        },
-                      }))
-                    }
-                    className="border p-2 rounded w-full focus:outline-pink-400"
-                  >
-                    <option value={true}>Yes</option>
-                    <option value={false}>No</option>
-                  </select>
-                </div>
-
-                <div className="mb-4">
-                  <label className="block mb-2 text-gray-700 font-semibold">
-                    Discount Percentage:
-                  </label>
-                  <input
-                    type="number"
-                    name="offer.discountPercentage"
-                    value={editedProduct.offer?.discountPercentage ?? ""}
-                    onChange={(e) =>
-                      setEditedProduct((prev) => ({
-                        ...prev,
-                        offer: {
-                          ...prev.offer,
-                          discountPercentage: parseInt(e.target.value) || 0,
-                        },
-                      }))
-                    }
-                    className="border p-2 rounded w-full focus:outline-pink-400"
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <button
-                    type="submit"
-                    className="w-full bg-pink-600 text-white py-2 rounded hover:bg-pink-700"
-                  >
-                    Save Changes
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )} */}
       {selectedProduct && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="scroll bg-white p-6 rounded-lg shadow-lg w-96 relative">
-            <button
+            {/* <button
               onClick={() => setSelectedProduct(null)}
               className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
             >
               ✖️
-            </button>
+            </button> */}
             <h3 className="text-2xl font-bold mb-6 text-pink-700 text-center">
               Edit Product
             </h3>
@@ -694,15 +553,30 @@ const ProductList = () => {
           </div> */}
 
                 {/* Submit */}
-                <div className="mb-4">
+                {/* <div className="mb-4">
                   <button
                     type="submit"
                     className="w-full bg-pink-600 text-white py-2 rounded hover:bg-pink-700"
                   >
                     Save Changes
                   </button>
-                </div>
+                </div> */}
               </form>
+            </div>
+            <div className="mb-4 flex justify-between gap-4">
+              <button
+                type="submit"
+                className="w-1/2 bg-pink-600 text-white py-2 rounded hover:bg-pink-700"
+              >
+                Save Changes
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedProduct(null)}
+                className="w-1/2 bg-gray-300 text-gray-800 py-2 rounded hover:bg-gray-400"
+              >
+                Cancel
+              </button>
             </div>
           </div>
         </div>
@@ -712,6 +586,3 @@ const ProductList = () => {
 };
 
 export default ProductList;
-
-
-

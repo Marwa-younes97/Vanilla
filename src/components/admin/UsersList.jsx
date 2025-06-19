@@ -171,7 +171,7 @@ const UsersList = () => {
                       </button>
                       <button
                         onClick={() => handleDelete(user._id)}
-                        className="flex items-center gap-1 bg-gray-600 hover:bg-red-700 text-white text-xs py-1 px-2 rounded"
+                        className="flex items-center gap-1 bg-gray-600 hover:bg-gray-700 text-white text-xs py-1 px-2 rounded"
                         title="Delete user"
                       >
                         <FaTrash /> Delete

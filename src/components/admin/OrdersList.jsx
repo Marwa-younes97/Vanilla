@@ -1,5 +1,3 @@
-// -----------------------------------------------------------------
-// OrdersList.jsx
 import React, { useState, useEffect } from "react";
 
 import Select from "react-select";
@@ -9,6 +7,8 @@ const OrdersList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ordersPerPage = 10;
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -95,6 +95,14 @@ const OrdersList = () => {
     return matchesSearch && matchesStatus;
   });
 
+  const indexOfLastOrder = currentPage * ordersPerPage;
+  const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+  const currentOrders = filteredOrders.slice(
+    indexOfFirstOrder,
+    indexOfLastOrder
+  );
+  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+
   // ⭐ تخصيص ألوان الـ Select
   const customStyles = {
     option: (provided, state) => ({
@@ -133,7 +141,7 @@ const OrdersList = () => {
       {/* <h1 className="text-3xl font-bold mb-6 text-gray-800 text-center">
         📦 Orders Management
       </h1> */}
-            <h1 className="text-3xl font-bold mb-6 text-pink-700">
+      <h1 className="text-3xl font-bold mb-6 text-pink-700">
         Orders Management
       </h1>
 
@@ -169,12 +177,13 @@ const OrdersList = () => {
 
       {/* Orders Table */}
       <div className="overflow-x-auto rounded shadow-md border border-gray-200">
-        <table className="min-w-full divide-y divide-gray-200">
+        <table className="min-w-[1500px] divide-y divide-gray-200">
           <thead className="bg-pink-100 text-pink-800">
             <tr>
               <th className="py-3 px-4 text-left">Order ID</th>
               <th className="py-3 px-4 text-left">Customer</th>
               <th className="py-3 px-4 text-left">Email</th>
+              <th className="py-3 px-4 text-center">Payment</th>
               <th className="py-3 px-4 text-center">Status</th>
               <th className="py-3 px-4 text-center">Total Price</th>
               <th className="py-3 px-4 text-center">Change</th>
@@ -183,7 +192,7 @@ const OrdersList = () => {
           </thead>
           <tbody className="bg-white">
             {filteredOrders.length > 0 ? (
-              filteredOrders.map((order) => (
+              currentOrders.map((order) => (
                 <tr
                   key={order._id}
                   className="border-b hover:bg-gray-50 transition"
@@ -191,6 +200,18 @@ const OrdersList = () => {
                   <td className="px-4 py-3">{order._id}</td>
                   <td className="px-4 py-3">{order.user?.name || "N/A"}</td>
                   <td className="px-4 py-3">{order.user?.email || "N/A"}</td>
+                  <td className="px-4 py-3 text-center">
+                    <span
+                      className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        order.paymentStatus === "Paid"
+                          ? "bg-green-100 text-green-700"
+                          : "bg-yellow-100 text-yellow-700"
+                      }`}
+                    >
+                      {order.paymentStatus}
+                    </span>
+                  </td>
+
                   <td className="px-4 py-3 text-center">
                     <span
                       className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
@@ -247,39 +268,71 @@ const OrdersList = () => {
       </div>
 
       {/* Order Details Modal */}
-      {selectedOrder && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg w-96 shadow-xl relative">
-            <button
-              onClick={() => setSelectedOrder(null)}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-lg"
-            >
-              ✖
-            </button>
-            <h2 className="text-xl font-bold mb-4">
-              Order #{selectedOrder._id}
-            </h2>
-            <ul className="space-y-3 max-h-60 overflow-y-auto">
-              {selectedOrder.products?.map((product, index) => (
-                <li key={index} className="border-b pb-2">
-                  <div>
-                    <strong>Product:</strong> {product.name}
-                  </div>
-                  <div>
-                    <strong>Quantity:</strong> {product.quantity}
-                  </div>
-                  <div>
-                    <strong>Price:</strong> {product.price} EGP
-                  </div>
-                </li>
-              ))}
-            </ul>
+{selectedOrder && (
+  <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center px-4">
+    <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-2xl animate-fade-in">
+      <h2 className="text-xl font-semibold text-pink-600 mb-4 text-center">
+        Order Details
+      </h2>
+
+      <div className="space-y-4 max-h-64 overflow-y-auto pr-2">
+        {selectedOrder.products?.map((product, index) => (
+          <div
+            key={index}
+            className="border rounded-lg px-4 py-3 bg-gray-50 shadow-sm"
+          >
+            <p className="text-sm">
+              <span className="font-medium text-gray-700">Product:</span>{" "}
+              {product.name}
+            </p>
+            <p className="text-sm">
+              <span className="font-medium text-gray-700">Quantity:</span>{" "}
+              {product.quantity}
+            </p>
+            <p className="text-sm">
+              <span className="font-medium text-gray-700">Price:</span>{" "}
+              {product.price} EGP
+            </p>
           </div>
-        </div>
-      )}
+        ))}
+      </div>
+
+      {/* زر الإغلاق */}
+      <div className="mt-6 flex justify-end">
+        <button
+          onClick={() => setSelectedOrder(null)}
+          className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+      <div className="flex justify-center items-center gap-6 mt-6">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 disabled:bg-gray-300"
+        >
+          Previous
+        </button>
+        <span className="text-lg">
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
+          disabled={currentPage === totalPages}
+          className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 disabled:bg-gray-300"
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };
 
 export default OrdersList;
-

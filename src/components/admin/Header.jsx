@@ -56,7 +56,7 @@ const Header = () => {
             "https://bakeryproject-1onw.onrender.com/api/admin/users",
             { headers: { Authorization: `Bearer ${token}` } }
           );
-
+console.log(admin.image)
           // جلب الطلبات
           const ordersRes = await axios.get(
             "https://bakeryproject-1onw.onrender.com/api/orders",
@@ -109,7 +109,7 @@ const Header = () => {
         setShowDropdown(false);
       }
     }, 400);
-
+    
     return () => clearTimeout(delayDebounce);
   }, [searchTerm]);
 
@@ -133,7 +133,7 @@ const Header = () => {
           src={
             admin?.image
               ? `https://bakeryproject-1onw.onrender.com/${admin.image}`
-              : "../../../public/admin_image.jpg"
+              : "/user_img.jpg"
           }
           alt="Admin Profile"
           className="w-10 h-10 rounded-full object-cover border-2 border-pink-300 shadow"
