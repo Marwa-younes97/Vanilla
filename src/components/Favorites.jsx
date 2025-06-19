@@ -13,20 +13,8 @@ const Favorites = () => {
   }
 
   return (
-    // <div className="container mx-auto p-4">
-    //   <h2 className="text-2xl font-bold mb-6 text-pink-700">My Favorite Products</h2>
 
-    //   {favorites.length > 0 ? (
-    //     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-    //       {favorites.map((product) => (
-    //         <ProductCard key={product._id} product={product} />
-    //       ))}
-    //     </div>
-    //   ) : (
-    //     <p className="text-gray-500 text-lg">You have no favorite products yet.</p>
-    //   )}
-    // </div>
-    <div className="min-h-screen bg-gray-50 mt-20 px-6 py-6">
+    <div className="min-h-screen bg-gray-50 mt-20 px-6">
   <div className="max-w-7xl mx-auto">
     <h2 className="text-3xl font-bold mb-8 text-pink-700 text-center">
       My Favorite Products
