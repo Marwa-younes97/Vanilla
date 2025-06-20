@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Login from "../components/Login";
 import SignUp from "../components/Register";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-import { FaHeart } from "react-icons/fa";
-import {jwtDecode} from "jwt-decode";  // تصحيح الاستيراد من jwt-decode
+import { jwtDecode } from "jwt-decode";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
 
 const Navbar = () => {
   const { getCartCount } = useCart();
@@ -14,15 +12,14 @@ const Navbar = () => {
   const [showSignUp, setShowSignUp] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [userImage, setUserImage] = useState("/user_img.jpg"); // صورة افتراضية
+  const [userImage, setUserImage] = useState("/user_img.jpg");
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     if (token) {
       setIsLoggedIn(true);
       try {
-        const decoded = jwtDecode(token);
-        // يمكن استخدام decoded إذا أردت بيانات إضافية مثل userId أو role
+        jwtDecode(token);
       } catch (error) {
         console.error("فشل في تحليل التوكن:", error);
       }
@@ -35,18 +32,14 @@ const Navbar = () => {
         })
         .then((response) => {
           const user = response.data.user;
-          if (user && user.image) {
-            setUserImage(`${user.image}`);
-          } else {
-            setUserImage("/user_img.jpg");
-          }
+          setUserImage(user?.image || "/user_img.jpg");
         })
         .catch((error) => {
           console.error("فشل في تحميل بيانات المستخدم:", error);
         });
     }
   }, []);
-// console.log(userImage)
+
   const handleLoginClick = () => {
     setShowLogin(true);
     setShowSignUp(false);
@@ -70,16 +63,13 @@ const Navbar = () => {
     setShowLogin(false);
     setShowSignUp(false);
   };
-const location = useLocation();
-const hideNavbar = location.pathname === "/user" || location.pathname === "/favorites";
 
-if (hideNavbar) {
-  return null; // لا تعرض الـ Navbar
-}
+  const location = useLocation();
+  const hideNavbar = location.pathname === "/user" || location.pathname === "/favorites";
+  if (hideNavbar) return null;
 
   return (
     <nav className="Nav-height fixed top-0 left-0 w-full z-50 bg-black bg-opacity-90 text-white px-6 py-4 flex items-center justify-between">
-      {/* الشعار */}
       <div className="flex items-center space-x-4">
         <h3 className="text-lg font-semibold">
           <Link to="/">
@@ -92,7 +82,6 @@ if (hideNavbar) {
         </h3>
       </div>
 
-      {/* زر الموبايل */}
       <button
         className="md:hidden text-white focus:outline-none"
         onClick={() => setMenuOpen(!menuOpen)}
@@ -109,7 +98,6 @@ if (hideNavbar) {
         )}
       </button>
 
-      {/* القائمة العلوية */}
       <ul className="hidden md:flex space-x-8 font-medium text-lg">
         <li><Link to="/" className="hover:text-yellow-400">Home</Link></li>
         <li><Link to="/blog" className="hover:text-yellow-400">Blog</Link></li>
@@ -121,14 +109,8 @@ if (hideNavbar) {
             <span className="text-lg text-pink-600">{getCartCount() > 0 ? getCartCount() : ""}</span>
           </Link>
         </li>
-        {/* <li>
-          <Link to="/favorites" className="flex items-center gap-2 hover:text-yellow-400 relative">
-            <FaHeart />
-          </Link>
-        </li> */}
       </ul>
 
-      {/* أزرار الحساب */}
       <div className="hidden md:flex items-center space-x-4">
         {!isLoggedIn ? (
           <>
@@ -144,14 +126,13 @@ if (hideNavbar) {
                 className="w-10 h-10 rounded-full border-2 border-white object-cover"
               />
             </Link>
-            <button onClick={handleLogout} className="bg-pink-700 text-white px-5 py-2 rounded-md hover:bg-white hover:text-pink-700">Logout</button>
+            <button onClick={handleLogout} className="bg-pink-700 text-white px-5 py-2 rounded-md hover:bg-white hover:text-pink-700 border border-white">Logout</button>
           </>
         )}
       </div>
 
-      {/* قائمة الجوال الجانبية */}
       {menuOpen && (
-        <div className="fixed top-[64px] left-0 w-full bg-black bg-opacity-95 text-white flex flex-col space-y-4 py-6 px-6 md:hidden z-40">
+        <div className="fixed top-[64px] left-0 w-full h-screen bg-black bg-opacity-95 text-white flex flex-col space-y-4 py-6 px-6 md:hidden z-40">
           <ul className="flex flex-col space-y-4 font-medium text-lg">
             <li><Link to="/" onClick={() => setMenuOpen(false)} className="hover:text-yellow-400">Home</Link></li>
             <li><Link to="/blog" onClick={() => setMenuOpen(false)} className="hover:text-yellow-400">Blog</Link></li>
@@ -165,39 +146,52 @@ if (hideNavbar) {
             </li>
           </ul>
 
-          <div className="mt-6 flex flex-col space-y-4">
+          <div className="mt-6 flex flex-col items-center justify-center space-y-4 text-center w-full">
             {!isLoggedIn ? (
               <>
-                <button onClick={handleLoginClick} className="bg-pink-700 text-white px-6 py-3 rounded-md hover:bg-white hover:text-pink-700">Login</button>
-                <button onClick={handleSignUpClick} className="bg-pink-700 text-white px-6 py-3 rounded-md hover:bg-white hover:text-pink-700">Sign up</button>
+                <button onClick={handleLoginClick} className="bg-pink-700 text-white px-6 py-3 rounded-md hover:bg-white hover:text-pink-700 w-1/2">Login</button>
+                <button onClick={handleSignUpClick} className="bg-pink-700 text-white px-6 py-3 rounded-md hover:bg-white hover:text-pink-700 w-1/2">Sign up</button>
               </>
             ) : (
-              <div className="flex items-center space-x-4">
-                <Link to="/user">
-                  <img
-                    src={userImage}
-                    alt="User"
-                    className="w-10 h-10 rounded-full border-2 border-white object-cover"
-                  />
-                </Link>
-                <button onClick={handleLogout} className="bg-pink-700 text-white px-5 py-2 rounded-md hover:bg-white hover:text-pink-700 flex-1">Logout</button>
-              </div>
+              <div className="flex flex-col items-center space-y-2">
+              <Link to="/user">
+                <img
+                  src={userImage}
+                  alt="User"
+                  className="w-10 h-10 rounded-full border-2 border-white object-cover"
+                />
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="bg-pink-700 text-white px-4 py-2 h-10 rounded-md hover:bg-white hover:text-pink-700 border border-white transition-all duration-200"
+              >
+                Logout
+              </button>
+            </div>
+            
             )}
           </div>
         </div>
       )}
 
-      {/* مودال تسجيل الدخول والتسجيل */}
       {showLogin && (
-        <Login onClose={closeModal} onSignUpClick={handleSignUpClick} setIsLoggedIn={setIsLoggedIn} />
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60"
+          onClick={closeModal}
+        >
+          <div onClick={(e) => e.stopPropagation()}>
+            <Login onClose={closeModal} onSignUpClick={handleSignUpClick} setIsLoggedIn={setIsLoggedIn} />
+          </div>
+        </div>
       )}
+
       {showSignUp && (
-        <SignUp onClose={closeModal} onLoginClick={handleLoginClick} setIsLoggedIn={setIsLoggedIn} />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60">
+          <SignUp onClose={closeModal} onLoginClick={handleLoginClick} setIsLoggedIn={setIsLoggedIn} />
+        </div>
       )}
     </nav>
   );
 };
 
 export default Navbar;
-
-

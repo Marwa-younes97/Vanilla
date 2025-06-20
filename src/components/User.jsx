@@ -2,18 +2,11 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import UserNotifications from "./UserNotifications";
 import Favorites from "./Favorites";
-
-import { Pencil, Bell, User, MessageCircle, Star } from "lucide-react";
+import { Pencil, Bell, User, MessageCircle, Star, Menu } from "lucide-react";
 
 export default function UserProfile() {
   const navigate = useNavigate();
-  const [userData, setUserData] = useState({
-    name: "",
-    email: "",
-    image: "",
-    _id: "",
-    favorites: [],
-  });
+  const [userData, setUserData] = useState({ name: "", email: "", image: "", _id: "", favorites: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [successMsg, setSuccessMsg] = useState("");
@@ -21,10 +14,11 @@ export default function UserProfile() {
   const fileInputRef = useRef(null);
   const [activeTab, setActiveTab] = useState("profile");
   const [messages, setMessages] = useState([]);
-  const [hasNewNotifications, setHasNewNotifications] = useState(false);
-  const [hasNewMessages, setHasNewMessages] = useState(false);
+  const [newMessageCount, setNewMessageCount] = useState(0);
+  const [newNotificationCount, setNewNotificationCount] = useState(0);
   const [notifications, setNotifications] = useState([]);
-
+  const [sidebarImage, setSidebarImage] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
@@ -33,21 +27,13 @@ export default function UserProfile() {
       setLoading(false);
       return;
     }
-
     fetch("https://bakeryproject-1onw.onrender.com/api/auth/profile", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch user profile");
-        return res.json();
-      })
+      .then((res) => res.ok ? res.json() : Promise.reject("Failed to fetch user profile"))
       .then((data) => {
         const user = data.user;
-        if (!user) {
-          setError("User not found");
-        } else {
+        if (user) {
           setUserData({
             name: user.name,
             email: user.email,
@@ -55,145 +41,91 @@ export default function UserProfile() {
             _id: user._id,
             favorites: user.favorites || [],
           });
+        } else {
+          setError("User not found");
         }
       })
-      .catch((err) => setError(err.message))
+      .catch((err) => setError(err))
       .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
-    if (successMsg) {
-      const timer = setTimeout(() => setSuccessMsg(""), 3000);
-      return () => clearTimeout(timer);
+    if (userData.image) {
+      const imagePath = userData.image.startsWith("blob:") ? userData.image :
+        userData.image.startsWith("http") ? userData.image : `https://bakeryproject-1onw.onrender.com/${userData.image}`;
+      setSidebarImage(imagePath);
     }
-  }, [successMsg]);
-
-  const handleChange = (e) => {
-    setUserData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleImageChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      if (!file.type.startsWith("image/")) {
-        setError("Invalid file type. Please upload an image.");
-        return;
-      }
-      setError(null);
-      setImageFile(file);
-      setUserData((prev) => ({
-        ...prev,
-        image: URL.createObjectURL(file),
-      }));
-    }
-  };
+  }, [userData.image]);
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     if (!token) return;
-
     fetch("https://bakeryproject-1onw.onrender.com/api/contact/user/me", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch user messages");
-        return res.json();
-      })
+      .then((res) => res.ok ? res.json() : Promise.reject("Failed to fetch user messages"))
       .then((data) => {
         const repliedMessages = data.data.filter((msg) => msg.reply);
         setMessages(repliedMessages);
-
-        if (repliedMessages.length > 0) {
-          const latest = repliedMessages[0];
-          const latestTime = new Date(latest.repliedAt);
-          const threshold = new Date(Date.now() - 60 * 60 * 1000); // خلال آخر ساعة
-          if (latestTime > threshold) {
-            setHasNewMessages(true);
-          }
-        }
+        const newMsgs = repliedMessages.filter((msg) => {
+          const latestTime = new Date(msg.repliedAt);
+          const threshold = new Date(Date.now() - 60 * 60 * 1000);
+          return latestTime > threshold;
+        });
+        setNewMessageCount(newMsgs.length);
       })
-      .catch((err) => console.error("Error fetching messages:", err));
+      .catch(console.error);
   }, []);
-
-  const handleUploadClick = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-useEffect(() => {
-  const token = localStorage.getItem("authToken");
-  if (!token) return;
-
-  fetch("https://bakeryproject-1onw.onrender.com/api/notifications", {
-    headers: { Authorization: `Bearer ${token}` },
-  })
-    .then((res) => {
-      if (!res.ok) throw new Error("Failed to fetch notifications");
-      return res.json();
-    })
-    .then((data) => setNotifications(data))
-    .catch((err) => console.error("Error fetching notifications:", err));
-}, []);
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
     if (!token) return;
-
     fetch("https://bakeryproject-1onw.onrender.com/api/notifications", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch notifications");
-        return res.json();
-      })
+      .then((res) => res.ok ? res.json() : Promise.reject("Failed to fetch notifications"))
       .then((data) => {
-        if (data?.length > 0) {
-          const latest = data[0];
-          const latestTime = new Date(latest.createdAt);
-          const threshold = new Date(Date.now() - 60 * 60 * 1000); // آخر ساعة
-          if (latestTime > threshold) {
-            setHasNewNotifications(true);
-          }
-        }
+        setNotifications(data);
+        const newNotifs = data.filter((notif) => {
+          const latestTime = new Date(notif.createdAt);
+          const threshold = new Date(Date.now() - 60 * 60 * 1000);
+          return latestTime > threshold;
+        });
+        setNewNotificationCount(newNotifs.length);
       })
-      .catch((err) => {
-        console.error("Error checking notifications:", err);
-      });
+      .catch(console.error);
   }, []);
 
+  useEffect(() => {
+    if (activeTab === "notifications") setNewNotificationCount(0);
+    if (activeTab === "messages") setNewMessageCount(0);
+  }, [activeTab]);
+
+  const handleChange = (e) => setUserData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleImageChange = (e) => {
+    if (e.target.files?.[0]) {
+      const file = e.target.files[0];
+      if (!file.type.startsWith("image/")) return setError("Invalid file type");
+      setImageFile(file);
+      setUserData((prev) => ({ ...prev, image: URL.createObjectURL(file) }));
+    }
+  };
+  const handleUploadClick = () => fileInputRef.current?.click();
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
-    setSuccessMsg("");
-
     const token = localStorage.getItem("authToken");
-    if (!token) {
-      setError("Not logged in");
-      setLoading(false);
-      return;
-    }
-
+    if (!token) return setError("Not logged in");
     const formData = new FormData();
     formData.append("name", userData.name);
     formData.append("email", userData.email);
     if (imageFile) formData.append("image", imageFile);
-
     fetch("https://bakeryproject-1onw.onrender.com/api/auth/profile", {
       method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
       body: formData,
     })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to update profile");
-        return res.json();
-      })
+      .then((res) => res.ok ? res.json() : Promise.reject("Failed to update profile"))
       .then((data) => {
         setSuccessMsg("Profile updated successfully");
         if (data.user?.image) {
@@ -203,251 +135,103 @@ useEffect(() => {
           }));
         }
       })
-      .catch((err) => setError(err.message))
+      .catch(setError)
       .finally(() => setLoading(false));
   };
-  const [sidebarImage, setSidebarImage] = useState(""); // صورة Sidebar
-  useEffect(() => {
-    if (userData.image) {
-      const imagePath = userData.image.startsWith("blob:")
-        ? userData.image
-        : userData.image.startsWith("http")
-        ? userData.image
-        : `https://bakeryproject-1onw.onrender.com/${userData.image}`;
-      setSidebarImage(imagePath);
-    }
-  }, [userData.image]);
 
-  useEffect(() => {
-  if (activeTab === "notifications" && hasNewNotifications) {
-    setHasNewNotifications(false);
-  }
-
-  if (activeTab === "messages" && hasNewMessages) {
-    setHasNewMessages(false);
-  }
-}, [activeTab]);
-
-  function ProfileSkeleton() {
-    return (
-      <div className="p-6 animate-pulse space-y-6">
-        <div className="flex items-center gap-4">
-          <div className="w-24 h-24 bg-gray-300 rounded-full"></div>
-          <div className="flex flex-col gap-2">
-            <div className="w-40 h-4 bg-gray-300 rounded"></div>
-            <div className="w-32 h-4 bg-gray-300 rounded"></div>
-          </div>
-        </div>
-
-        <div className="space-y-4 mt-6">
-          <div className="w-full h-10 bg-gray-200 rounded"></div>
-          <div className="w-full h-10 bg-gray-200 rounded"></div>
-          <div className="w-full h-10 bg-gray-300 rounded"></div>
-        </div>
-      </div>
-    );
-  }
-
-  const imageSrc = userData.image
-    ? userData.image.startsWith("blob:")
-      ? userData.image
-      : userData.image.startsWith("http")
-      ? userData.image
-      : `https://bakeryproject-1onw.onrender.com/${userData.image}`
-    : "/images/profile.png";
-
-  if (loading) return <ProfileSkeleton />;
+  if (loading) return <div className="p-6 text-gray-600">Loading...</div>;
   if (error) return <div className="p-6 text-red-600">Error: {error}</div>;
 
-  return (
-    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-white ">
-      {/* Sidebar */}
-      <aside className="w-full lg:w-64 bg-pink-50 p-6 flex flex-col justify-between sticky top-0 h-screen overflow-auto">
+  const navItems = [
+    { label: "Profile", icon: <User className="w-5 h-5" />, id: "profile" },
+    {
+      label: "Messages",
+      icon: (
+        <div className="relative">
+          <MessageCircle className="w-5 h-5" />
+          {newMessageCount > 0 && <span className="absolute -top-1 -right-1 bg-pink-700 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">{newMessageCount}</span>}
+        </div>
+      ),
+      id: "messages",
+    },
+    { label: "Favorites", icon: <Star className="w-5 h-5" />, id: "favorites" },
+    {
+      label: "Notifications",
+      icon: (
+        <div className="relative">
+          <Bell className="w-5 h-5" />
+          {newNotificationCount > 0 && <span className="absolute -top-1 -right-1 bg-pink-700 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">{newNotificationCount}</span>}
+        </div>
+      ),
+      id: "notifications",
+    },
+  ];
 
+  return (
+    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-white">
+      <div className="lg:hidden flex justify-between items-center p-4 border-b">
+        <h1 className="text-lg font-bold text-gray-800">User Profile</h1>
+        <button onClick={() => setSidebarOpen(!sidebarOpen)}>
+          <Menu className="w-6 h-6 text-gray-700" />
+        </button>
+      </div>
+      <aside className={`w-full lg:w-64 bg-pink-50 p-6 flex-col justify-between overflow-auto transition-transform duration-300 ${sidebarOpen ? "flex" : "hidden"} lg:flex`}>
         <div>
           <div className="flex items-center gap-3 mb-6">
-            <img
-              src={sidebarImage}
-              alt="User"
-              className="w-10 h-10 rounded-full object-cover border"
-            />
-
-            <h1 className="text-gray-800 font-bold text-base">
-              {userData.name?.split(" ")[0] || "User"}
-            </h1>
+            <img src={sidebarImage} onError={(e) => (e.target.src = "/user_img.jpg")} alt="User" className="w-10 h-10 rounded-full object-cover border" />
+            <h1 className="text-gray-800 font-bold text-base">{userData.name?.split(" ")[0] || "User"}</h1>
           </div>
-
           <nav className="space-y-6">
-            {[
-              {
-                label: "Profile",
-                icon: <User className="w-5 h-5" />,
-                id: "profile",
-              },
-              {
-                label: "Messages",
-                icon: (
-                  <div className="relative">
-                    <MessageCircle className="w-5 h-5" />
-                    {hasNewMessages && (
-                      <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-red-500" />
-                    )}
-                  </div>
-                ),
-                id: "messages",
-              },
-              // { label: "Favorites", icon: <Star className="w-5 h-5" />, id: "favorites" },
-              {
-                label: "Favorites",
-                icon: <Star className="w-5 h-5" />,
-                id: "favorites",
-              },
-              {
-                label: "Notifications",
-                icon: (
-                  <div className="relative">
-                    <Bell className="w-5 h-5" />
-                    {hasNewNotifications && (
-                      <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-red-500" />
-                    )}
-                  </div>
-                ),
-                id: "notifications",
-              },
-            ].map(({ label, icon, id }) => (
-              <button
-                key={id}
-                onClick={() => setActiveTab(id)}
-                className={`flex items-center gap-3 font-medium cursor-pointer bg-transparent border-none p-0 ${
-                  activeTab === id ? "text-pink-600" : "text-black"
-                }`}
-              >
-                {icon} {label}
-              </button>
+            {navItems.map(({ label, icon, id }) => (
+              <button key={id} onClick={() => { setActiveTab(id); setSidebarOpen(false); }} className={`flex items-center gap-3 font-medium p-2 rounded ${activeTab === id ? "text-pink-700 bg-white" : "text-gray-800 hover:text-pink-600"}`}>{icon} {label}</button>
             ))}
           </nav>
         </div>
         <div className="mt-10">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-pink-600 font-medium hover:text-pink-800 transition"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
+          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-pink-700 font-medium hover:text-pink-800 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
             Back
           </button>
         </div>
       </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 p-6 lg:p-10">
+      <main className="flex-1 p-4 sm:p-6 lg:p-10">
         {activeTab === "profile" && (
           <div>
             <h2 className="text-2xl font-bold text-black mb-6">Edit Profile</h2>
             <div className="flex flex-col sm:flex-row items-center gap-6 mb-8">
-              <img
-                src={imageSrc}
-                alt="User profile"
-                className="w-24 h-24 rounded-full object-cover"
-              />
-              <div>
-                <div className="flex gap-2 mt-2">
-                  <button
-                    type="button"
-                    className="bg-pink-500 text-white px-4 py-2 rounded text-sm"
-                    onClick={handleUploadClick}
-                  >
-                    Upload New Photo
-                  </button>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    ref={fileInputRef}
-                    style={{ display: "none" }}
-                    onChange={handleImageChange}
-                  />
-                </div>
+              <img src={sidebarImage} onError={(e) => (e.target.src = "/user_img.jpg")} alt="User" className="w-24 h-24 rounded-full object-cover border" />
+              <div className="flex gap-2 mt-2">
+                <button type="button" className="bg-pink-700 text-white px-4 py-2 rounded text-sm" onClick={handleUploadClick}>Upload New Photo</button>
+                <input type="file" accept="image/*" ref={fileInputRef} style={{ display: "none" }} onChange={handleImageChange} />
               </div>
             </div>
-
             <form onSubmit={handleSubmit} className="space-y-4">
               {["name", "email"].map((field) => (
-                <div
-                  key={field}
-                  className="flex items-center justify-between bg-gray-100 rounded-lg px-4 py-3"
-                >
-                  <input
-                    type={field === "email" ? "email" : "text"}
-                    name={field}
-                    value={userData[field]}
-                    onChange={handleChange}
-                    className="bg-transparent text-sm text-gray-800 w-full outline-none"
-                    placeholder={
-                      field === "name" ? "Full Name" : "Email Address"
-                    }
-                    required
-                  />
-                  <div className="ml-2 p-2 bg-white rounded-full border border-gray-300">
-                    <Pencil className="w-4 h-4 text-gray-500" />
-                  </div>
+                <div key={field} className="flex items-center justify-between bg-gray-100 rounded-lg px-4 py-3">
+                  <input type={field === "email" ? "email" : "text"} name={field} value={userData[field]} onChange={handleChange} className="bg-transparent text-sm text-gray-800 w-full outline-none" placeholder={field === "name" ? "Full Name" : "Email Address"} required />
+                  <div className="ml-2 p-2 bg-pink-700 rounded-full border border-gray-300"><Pencil className="w-4 h-4 text-white" /></div>
                 </div>
               ))}
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-pink-400 hover:bg-pink-500 text-white text-sm font-semibold py-3 rounded-xl mt-2 transition"
-              >
-                Update Profile
-              </button>
+              <div className="flex justify-center">
+                <button type="submit" disabled={loading} className="w-64 bg-pink-700 text-white text-sm font-semibold py-3 rounded-xl mt-2 transition">Update Profile</button>
+              </div>
             </form>
-
-            {successMsg && !error && (
-              <p className="mt-4 text-green-600">{successMsg}</p>
-            )}
+            {successMsg && !error && <p className="mt-4 text-green-600">{successMsg}</p>}
             {error && <p className="mt-4 text-red-600">{error}</p>}
           </div>
         )}
         {activeTab === "messages" && (
-          <div>
-            <h2 className="text-2xl font-bold mb-6 text-pink-600">Inbox</h2>
-
-            {messages.length === 0 ? (
-              <p className="text-gray-500 text-center mt-10">
-                You have no messages with replies yet.
-              </p>
-            ) : (
+          <div className="mt-4">
+            <h2 className="text-2xl font-bold mb-6 text-pink-700">Inbox</h2>
+            {messages.length === 0 ? <p className="text-gray-500 text-center mt-10">You have no messages with replies yet.</p> : (
               <div className="space-y-4">
                 {messages.map((msg) => (
-                  <div
-                    key={msg._id}
-                    className="flex items-start gap-4 bg-white shadow-sm border border-gray-200 rounded-lg p-4 hover:shadow-md transition"
-                  >
-                    <div className="flex-shrink-0 bg-pink-100 text-pink-600 rounded-full w-10 h-10 flex items-center justify-center">
-                      <MessageCircle className="w-5 h-5" />
-                    </div>
+                  <div key={msg._id} className="flex items-start gap-4 bg-white shadow-sm border border-gray-200 rounded-lg p-4 hover:shadow-md transition">
+                    <div className="flex-shrink-0 bg-pink-100 text-pink-700 rounded-full w-10 h-10 flex items-center justify-center"><MessageCircle className="w-5 h-5" /></div>
                     <div className="flex-1">
                       <div className="flex justify-between items-center mb-1">
-                        <h3 className="font-semibold text-gray-800">
-                          {msg.subject}
-                        </h3>
-                        {msg.repliedAt && (
-                          <span className="text-xs text-gray-400">
-                            {new Date(msg.repliedAt).toLocaleString()}
-                          </span>
-                        )}
+                        <h3 className="font-semibold text-gray-800">{msg.subject}</h3>
+                        {msg.repliedAt && <span className="text-xs text-gray-400">{new Date(msg.repliedAt).toLocaleString()}</span>}
                       </div>
                       <p className="text-sm text-gray-600">{msg.reply}</p>
                     </div>
@@ -457,17 +241,8 @@ useEffect(() => {
             )}
           </div>
         )}
-        {activeTab === "favorites" && (
-          <div className="mt-4">
-            <Favorites />
-          </div>
-        )}
-{activeTab === "notifications" && (
-  <div className="mt-4">
-    <UserNotifications notifications={notifications} />
-  </div>
-)}
-
+        {activeTab === "favorites" && <div className="mt-4"><Favorites /></div>}
+        {activeTab === "notifications" && <div className="mt-4"><UserNotifications notifications={notifications} /></div>}
       </main>
     </div>
   );
