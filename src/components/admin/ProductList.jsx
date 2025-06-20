@@ -389,12 +389,6 @@ const ProductList = () => {
       {selectedProduct && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="scroll bg-white p-6 rounded-lg shadow-lg w-96 relative">
-            {/* <button
-              onClick={() => setSelectedProduct(null)}
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-            >
-              ✖️
-            </button> */}
             <h3 className="text-2xl font-bold mb-6 text-pink-700 text-center">
               Edit Product
             </h3>
@@ -528,39 +522,6 @@ const ProductList = () => {
                     isDisabled={!editedProduct.offer?.isOnSale} // ✅ تعطيل الحقل إذا لم يكن On Sale
                   />
                 </div>
-
-                {/* Discount Percentage */}
-                {/* <div className="mb-4">
-            <label className="block mb-2 text-gray-700 font-semibold">
-              Discount Percentage:
-            </label>
-            <input
-              type="number"
-              name="offer.discountPercentage"
-              value={editedProduct.offer?.discountPercentage ?? ""}
-              onChange={(e) =>
-                setEditedProduct((prev) => ({
-                  ...prev,
-                  offer: {
-                    ...prev.offer,
-                    discountPercentage:
-                      parseInt(e.target.value) || 0,
-                  },
-                }))
-              }
-              className="border p-2 rounded w-full focus:outline-pink-400"
-            />
-          </div> */}
-
-                {/* Submit */}
-                {/* <div className="mb-4">
-                  <button
-                    type="submit"
-                    className="w-full bg-pink-600 text-white py-2 rounded hover:bg-pink-700"
-                  >
-                    Save Changes
-                  </button>
-                </div> */}
               </form>
             </div>
             <div className="mb-4 flex justify-between gap-4">
