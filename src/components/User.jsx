@@ -140,7 +140,7 @@ export default function UserProfile() {
       .finally(() => setLoading(false));
   };
 
-  if (loading) return <div className="p-6 text-gray-600">Loading...</div>;
+  // if (loading) return <div className="p-6 text-gray-600">Loading...</div>;
   if (error) return <div className="p-6 text-red-600">Error: {error}</div>;
 
   const navItems = [
