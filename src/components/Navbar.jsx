@@ -69,8 +69,8 @@ const Navbar = () => {
   if (hideNavbar) return null;
 
   return (
-    <nav className="Nav-height fixed top-0 left-0 w-full z-50 bg-black bg-opacity-90 text-white px-6 py-4 flex items-center justify-between">
-      <div className="flex items-center space-x-4">
+<nav className="Nav-height fixed top-0 left-0 w-full z-50 bg-black bg-opacity-90 text-white px-6 py-2 flex items-center justify-between">
+<div className="flex items-center space-x-4">
         <h3 className="text-lg font-semibold">
           <Link to="/">
             <img
@@ -112,24 +112,44 @@ const Navbar = () => {
       </ul>
 
       <div className="hidden md:flex items-center space-x-4">
-        {!isLoggedIn ? (
-          <>
-            <button onClick={handleLoginClick} className="bg-pink-700 text-white px-6 py-3 rounded-md hover:bg-white hover:text-pink-700">Login</button>
-            <button onClick={handleSignUpClick} className="bg-pink-700 text-white px-6 py-3 rounded-md hover:bg-white hover:text-pink-700">Sign up</button>
-          </>
-        ) : (
-          <>
-            <Link to="/user">
-              <img
-                src={userImage}
-                alt="User"
-                className="w-10 h-10 rounded-full border-2 border-white object-cover"
-              />
-            </Link>
-            <button onClick={handleLogout} className="bg-pink-700 text-white px-5 py-2 rounded-md hover:bg-white hover:text-pink-700 border border-white">Logout</button>
-          </>
-        )}
-      </div>
+  {!isLoggedIn ? (
+    <>
+      <button
+        onClick={handleLoginClick}
+        className="bg-pink-700 font-bold text-white px-6 py-3 rounded-md hover:bg-white hover:text-pink-700"
+      >
+        Login
+      </button>
+      <button
+        onClick={handleSignUpClick}
+        className="bg-pink-700 font-bold text-white px-6 py-3 rounded-md hover:bg-white hover:text-pink-700"
+      >
+        Sign up
+      </button>
+    </>
+  ) : (
+    <>
+      <Link to="/user">
+        <img
+          src={userImage && userImage.trim() !== "" ? userImage : "/user_img.jpg"}
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "/user_img.jpg";
+          }}
+          alt="User"
+          className="w-10 h-10 rounded-full border-2 border-white object-cover"
+        />
+      </Link>
+      <button
+        onClick={handleLogout}
+        className="bg-pink-700 font-bold text-white px-6 py-3 rounded-md hover:bg-white hover:text-pink-700"
+      >
+        Logout
+      </button>
+    </>
+  )}
+</div>
+
 
       {menuOpen && (
         <div className="fixed top-[64px] left-0 w-full h-screen bg-black bg-opacity-95 text-white flex flex-col space-y-4 py-6 px-6 md:hidden z-40">
