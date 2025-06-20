@@ -61,56 +61,66 @@ const Register = ({ onClose, onLoginClick, setIsLoggedIn }) => {
             &times;
           </button>
 
-          <h2 className="text-4xl font-semibold text-center mb-6 text-pink-700">Create Account</h2>
+          <h2 className="text-4xl font-semibold text-center mb-6 text-pink-700">
+            Create Account
+          </h2>
 
           {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
           <form onSubmit={handleRegister}>
             <div className="mb-6">
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name*</label>
+              <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                Name*
+              </label>
               <input
                 type="text"
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
-                className="w-full p-4 border border-gray-300 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                className="w-full p-4 border border-gray-300 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-pink-500 text-black"
               />
             </div>
 
             <div className="mb-6">
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email*</label>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                Email*
+              </label>
               <input
                 type="email"
                 id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full p-4 border border-gray-300 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                className="w-full p-4 border border-gray-300 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-pink-500 text-black"
               />
             </div>
 
             <div className="mb-6">
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password*</label>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                Password*
+              </label>
               <input
                 type="password"
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full p-4 border border-gray-300 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                className="w-full p-4 border border-gray-300 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-pink-500 text-black"
               />
             </div>
 
             <div className="mb-6">
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirm Password*</label>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                Confirm Password*
+              </label>
               <input
                 type="password"
                 id="confirmPassword"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                className="w-full p-4 border border-gray-300 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+                className="w-full p-4 border border-gray-300 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-pink-500 text-black"
               />
             </div>
 
@@ -128,7 +138,10 @@ const Register = ({ onClose, onLoginClick, setIsLoggedIn }) => {
           <div className="text-center mt-6">
             <p className="text-lg text-gray-700">
               Already have an account?
-              <button onClick={onLoginClick} className="ml-2 text-pink-600 hover:underline font-bold">
+              <button
+                onClick={onLoginClick}
+                className="ml-2 text-pink-600 hover:underline font-bold"
+              >
                 Login
               </button>
             </p>
