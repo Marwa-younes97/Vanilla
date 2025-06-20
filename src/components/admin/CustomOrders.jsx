@@ -13,7 +13,9 @@ const CustomOrders = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const ordersPerPage = 10;
 
-  const [selectedDescription, setSelectedDescription] = useState(null);
+  // const [selectedDescription, setSelectedDescription] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
+
 
   const customStyles = {
     control: (provided, state) => ({
@@ -184,7 +186,7 @@ const CustomOrders = () => {
               <th className="py-3 px-4 text-left">Customer</th>
               <th className="py-3 px-4 text-left">Email</th>
               <th className="py-3 px-4 text-left">Description</th>
-              <th className="py-3 px-4 text-center">Design</th>
+              {/* <th className="py-3 px-4 text-center">Design</th> */}
               <th className="py-3 px-4 text-center">Status</th>
               <th className="py-3 px-4 text-left">Price</th>
               <th className="py-3 px-4 text-center">Created At</th>
@@ -202,7 +204,9 @@ const CustomOrders = () => {
                 <td className="px-4 py-3">{order.user?.email || "N/A"}</td>
                 <td className="px-4 py-3 max-w-xs truncate">
                   <button
-                    onClick={() => setSelectedDescription(order.description)}
+                    // onClick={() => setSelectedDescription(order.description)}
+                    onClick={() => setSelectedItem({ description: order.description, designImage: order.designImage })}
+
                     className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-1.5 rounded-md text-sm"
                   >
                     View
@@ -300,7 +304,7 @@ const CustomOrders = () => {
           </button>
         </div>
       )}
-      {selectedDescription && (
+      {/* {selectedDescription && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center px-4">
           <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-2xl animate-fade-in">
             <h2 className="text-xl font-semibold text-pink-600 mb-4 text-center">
@@ -323,7 +327,40 @@ const CustomOrders = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
+      {selectedItem && (
+  <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center px-4">
+    <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-2xl animate-fade-in">
+      <h2 className="text-xl font-semibold text-pink-600 mb-4 text-center">
+        Order Details
+      </h2>
+
+      {/* <div className="mb-4 flex justify-center">
+        <img
+          src={selectedItem.designImage}
+          alt="Design"
+          className="max-h-48 object-contain rounded-md border"
+        />
+      </div> */}
+
+      <div className="max-h-64 overflow-y-auto pr-2 mb-4">
+        <div className="border border-gray-300 rounded p-3 bg-gray-50 text-gray-800 text-sm whitespace-pre-wrap">
+          {selectedItem.description}
+        </div>
+      </div>
+
+      <div className="flex justify-end">
+        <button
+          onClick={() => setSelectedItem(null)}
+          className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };
