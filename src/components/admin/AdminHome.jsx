@@ -62,14 +62,14 @@ const AdminHome = () => {
 
         switch (dateFilter) {
           case "today":
-            filteredOrders = orders.filter(order => {
+            filteredOrders = orders.filter((order) => {
               const orderDate = new Date(order.createdAt);
               return orderDate.toDateString() === now.toDateString();
             });
             break;
 
           case "7days":
-            filteredOrders = orders.filter(order => {
+            filteredOrders = orders.filter((order) => {
               const orderDate = new Date(order.createdAt);
               const sevenDaysAgo = new Date();
               sevenDaysAgo.setDate(now.getDate() - 7);
@@ -78,7 +78,7 @@ const AdminHome = () => {
             break;
 
           case "30days":
-            filteredOrders = orders.filter(order => {
+            filteredOrders = orders.filter((order) => {
               const orderDate = new Date(order.createdAt);
               const thirtyDaysAgo = new Date();
               thirtyDaysAgo.setDate(now.getDate() - 30);
@@ -109,13 +109,14 @@ const AdminHome = () => {
           revenueMap[date] = (revenueMap[date] || 0) + order.total;
         });
 
-        const revenueData = Object.entries(revenueMap).map(([date, revenue]) => ({
-          date,
-          revenue: parseFloat(revenue.toFixed(2)),
-        }));
+        const revenueData = Object.entries(revenueMap).map(
+          ([date, revenue]) => ({
+            date,
+            revenue: parseFloat(revenue.toFixed(2)),
+          })
+        );
 
         setRevenueChartData(revenueData);
-
       } catch (error) {
         console.error("Error fetching orders data:", error);
       }
@@ -124,7 +125,6 @@ const AdminHome = () => {
     fetchOrdersData();
   }, [dateFilter]);
 
-
   const handleDateFilterChange = (e) => {
     setDateFilter(e.target.value);
   };
@@ -132,8 +132,20 @@ const AdminHome = () => {
   return (
     <div className="p-8 min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100">
       <div className="mb-10 animate__fadeInUp">
-
         {/* Search bar and filters */}
+        {/* <div className="flex items-center gap-4 mb-8">
+          <select
+            value={dateFilter}
+            onChange={handleDateFilterChange}
+            className="p-3 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
+          >
+            <option value="30days">Last 30 Days</option>
+            <option value="7days">Last 7 Days</option>
+            <option value="today">Today</option>
+            <option value="all">All Time</option>
+          </select>
+        </div> */}
+
         <div className="flex items-center gap-4 mb-8">
           <select
             value={dateFilter}
@@ -145,7 +157,6 @@ const AdminHome = () => {
             <option value="today">Today</option>
             <option value="all">All Time</option>
           </select>
-          {/* <NotificationDropdown /> */}
         </div>
 
         {/* Stats Cards */}
@@ -175,12 +186,20 @@ const AdminHome = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Orders Chart */}
           <div className="bg-white p-8 rounded-2xl shadow-md">
-            <h3 className="text-2xl font-semibold text-gray-700 mb-6 text-center">🛒 Orders Statistics</h3>
+            <h3 className="text-2xl font-semibold text-gray-700 mb-6 text-center">
+              🛒 Orders Statistics
+            </h3>
             <div className="w-full h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={ordersChartData}>
                   <defs>
-                    <linearGradient id="colorOrders" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient
+                      id="colorOrders"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
                       <stop offset="5%" stopColor="#ec4899" stopOpacity={0.8} />
                       <stop offset="95%" stopColor="#ec4899" stopOpacity={0} />
                     </linearGradient>
@@ -204,12 +223,20 @@ const AdminHome = () => {
 
           {/* Revenue Chart */}
           <div className="bg-white p-8 rounded-2xl shadow-md">
-            <h3 className="text-2xl font-semibold text-gray-700 mb-6 text-center">💰 Revenue Statistics</h3>
+            <h3 className="text-2xl font-semibold text-gray-700 mb-6 text-center">
+              💰 Revenue Statistics
+            </h3>
             <div className="w-full h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={revenueChartData}>
                   <defs>
-                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <linearGradient
+                      id="colorRevenue"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
                       <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
                       <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                     </linearGradient>
@@ -237,4 +264,3 @@ const AdminHome = () => {
 };
 
 export default AdminHome;
-
