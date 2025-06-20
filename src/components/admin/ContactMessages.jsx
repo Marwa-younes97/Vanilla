@@ -70,7 +70,7 @@ const currentMessages = messages.slice(indexOfFirstMessage, indexOfLastMessage);
         },
       }
     );
-
+// console.log(`id=> ${id}`);
     const data = await response.json();
     if (data.success) {
       setMessages(messages.filter((msg) => msg._id !== id));
@@ -107,7 +107,7 @@ const currentMessages = messages.slice(indexOfFirstMessage, indexOfLastMessage);
           body: JSON.stringify({ reply: responseText }),
         }
       );
-
+console.log(currentMessageId);
       const data = await response.json();
       if (data.success) {
         await fetchMessages();
@@ -202,34 +202,6 @@ const currentMessages = messages.slice(indexOfFirstMessage, indexOfLastMessage);
         )}
       </div>
 
-      {/* Modal to send reply */}
-      {/* {showModal && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded shadow-lg w-96">
-            <h3 className="text-lg font-semibold mb-4">Reply to Message</h3>
-            <textarea
-              value={responseText}
-              onChange={handleReplyChange}
-              className="w-full p-2 border rounded mb-4"
-              placeholder="Type your reply here..."
-            />
-            <div className="flex justify-end space-x-2">
-              <button
-                onClick={handleSendReply}
-                className="px-4 py-2 bg-pink-600 text-white py-2 rounded hover:bg-pink-700"
-              >
-                Send Reply
-              </button>
-              <button
-                onClick={() => setShowModal(false)}
-                className="px-4 py-2 bg-gray-300 text-black rounded hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
-      )} */}
 {/* Modal to send reply */}
 {showModal && (
   <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center px-4">
@@ -263,34 +235,6 @@ const currentMessages = messages.slice(indexOfFirstMessage, indexOfLastMessage);
     </div>
   </div>
 )}
-
-      {/* Modal to view reply */}
-      {/* {showReplyModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md">
-            <h3 className="text-lg font-bold mb-4 text-green-700">
-              Reply Details
-            </h3>
-            <div className="text-sm text-gray-800 mb-2">
-              <strong>Reply:</strong>
-              <p className="mt-1">{replyContent}</p>
-            </div>
-            <div className="text-sm text-gray-500">
-              <strong>Replied At:</strong>{" "}
-              {new Date(replyDate).toLocaleString()}
-            </div>
-            <div className="flex justify-end mt-4">
-              <button
-                onClick={() => setShowReplyModal(false)}
-                className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )} */}
-      {/* Modal to view reply */}
 {showReplyModal && (
   <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center px-4">
     <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-2xl animate-fade-in">

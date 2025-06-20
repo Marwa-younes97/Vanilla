@@ -54,6 +54,7 @@ const ProductDetails = () => {
     fetchProduct();
   }, [productId]);
 
+  
   // جلب بيانات المستخدم
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -297,3 +298,4 @@ const ProductDetails = () => {
 };
 
 export default ProductDetails;
+
