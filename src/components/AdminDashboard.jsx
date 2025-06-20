@@ -368,7 +368,7 @@ const handleLogout = () => {
   {/* عنوان البانل */}
   <Link
     to="/admin"
-    className="text-center text-2xl font-bold p-6 border-b border-gray-600 hover:text-pink-400 flex-shrink-0"
+    className="text-center text-2xl font-bold p-6 border-b border-gray-600 hover:text-pink-700 flex-shrink-0"
     onClick={() => setSidebarOpen(false)}
   >
     Admin Panel
@@ -382,7 +382,7 @@ const handleLogout = () => {
         href="/"
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center p-2 hover:bg-gray-700 rounded hover:text-pink-400"
+        className="flex items-center p-2 hover:bg-gray-700 rounded hover:text-pink-700"
       >
         <FaHome />
         <span className="ml-2">Visit Site</span>
@@ -394,7 +394,7 @@ const handleLogout = () => {
           <Link
             key={menu.title}
             to={menu.items[0].path}
-            className="flex items-center p-2 hover:bg-gray-700 rounded hover:text-pink-400"
+            className="flex items-center p-2 hover:bg-gray-700 rounded hover:text-pink-700"
             onClick={() => setSidebarOpen(false)}
           >
             {menu.icon}
@@ -424,7 +424,7 @@ const handleLogout = () => {
                   <Link
                     key={subItem.label}
                     to={subItem.path}
-                    className="block hover:text-pink-400"
+                    className="block hover:text-pink-700"
                     onClick={() => setSidebarOpen(false)}
                   >
                     {subItem.label}
@@ -440,7 +440,7 @@ const handleLogout = () => {
       <div className="pt-6 border-t border-gray-700">
         <button
           onClick={handleLogout}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded transition"
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-pink-700 hover:bg-pink-600 text-white font-medium rounded transition"
         >
           <FaSignOutAlt />
           Logout

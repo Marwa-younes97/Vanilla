@@ -329,15 +329,20 @@ const Header = ({ onToggleSidebar }) => {
 
       {/* معلومات الأدمن مخفية في الشاشات الصغيرة */}
       <div className="hidden md:flex items-center gap-4">
-        <img
-          src={
-            admin?.image
-              ? `https://bakeryproject-1onw.onrender.com/${admin.image}`
-              : "/user_img.jpg"
-          }
-          alt="Admin Profile"
-          className="w-10 h-10 rounded-full object-cover border-2 border-pink-300 shadow"
-        />
+      <img
+  src={
+    admin?.image && admin.image.trim() !== ""
+      ? `https://bakeryproject-1onw.onrender.com/${admin.image.replace(/\\/g, "/")}`
+      : "/user_img.jpg"
+  }
+  onError={(e) => {
+    e.target.onerror = null; // يمنع تكرار الحدث
+    e.target.src = "/user_img.jpg"; // fallback تلقائي
+  }}
+  alt="Admin Profile"
+  className="w-10 h-10 rounded-full object-cover border-2 border-pink-300 shadow"
+/>
+
         <div>
           <p className="text-sm text-gray-500">Welcome back,</p>
           <h2 className="text-lg font-semibold text-gray-800">
