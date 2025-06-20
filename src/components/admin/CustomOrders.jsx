@@ -185,7 +185,7 @@ const CustomOrders = () => {
               <th className="py-3 px-4 text-left">Order ID</th>
               <th className="py-3 px-4 text-left">Customer</th>
               <th className="py-3 px-4 text-left">Email</th>
-              <th className="py-3 px-4 text-left">Description</th>
+              <th className="py-3 px-4 text-left">Details</th>
               {/* <th className="py-3 px-4 text-center">Design</th> */}
               <th className="py-3 px-4 text-center">Status</th>
               <th className="py-3 px-4 text-left">Price</th>
@@ -213,13 +213,13 @@ const CustomOrders = () => {
                   </button>
                 </td>
 
-                <td className="px-4 py-3 text-center">
+                {/* <td className="px-4 py-3 text-center">
                   <img
                     src={order.designImage}
                     alt="Design"
                     className="h-16 mx-auto object-contain rounded-md border"
                   />
-                </td>
+                </td> */}
                 <td className="px-4 py-3 text-center">
                   <span
                     className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
@@ -335,14 +335,18 @@ const CustomOrders = () => {
         Order Details
       </h2>
 
-      {/* <div className="mb-4 flex justify-center">
+      {/* كلمة Design قبل الصورة */}
+      {/* <div className="mb-2 text-sm font-medium text-gray-700">Design</div> */}
+      <div className="mb-4 flex justify-center">
         <img
           src={selectedItem.designImage}
           alt="Design"
           className="max-h-48 object-contain rounded-md border"
         />
-      </div> */}
+      </div> 
 
+      {/* كلمة Description قبل الوصف */}
+      <div className="mb-2 text-sm font-medium text-gray-700">Description:</div>
       <div className="max-h-64 overflow-y-auto pr-2 mb-4">
         <div className="border border-gray-300 rounded p-3 bg-gray-50 text-gray-800 text-sm whitespace-pre-wrap">
           {selectedItem.description}

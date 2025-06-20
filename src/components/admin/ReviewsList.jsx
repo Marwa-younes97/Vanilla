@@ -1,4 +1,3 @@
-// export default ReviewsList;
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Select from 'react-select';
@@ -12,6 +11,10 @@ const ReviewsList = () => {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [selectedRating, setSelectedRating] = useState(0);
+
+  // ** states for pagination **
+  const [currentPage, setCurrentPage] = useState(1);
+  const reviewsPerPage = 10;
 
   const customStyles = {
     control: (provided, state) => ({
@@ -65,6 +68,7 @@ const ReviewsList = () => {
       return matchesSearch && matchesRating;
     });
     setFilteredReviews(filtered);
+    setCurrentPage(1); // reset to first page on filter change
   }, [search, selectedRating, reviews]);
 
   const handleDeleteReview = async (reviewId) => {
@@ -78,9 +82,16 @@ const ReviewsList = () => {
     }
   };
 
-  // Group reviews by productId
+  // Pagination calculations
+  const indexOfLastReview = currentPage * reviewsPerPage;
+  const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
+
+  // احصل على مراجعات الصفحة الحالية
+  const currentReviews = filteredReviews.slice(indexOfFirstReview, indexOfLastReview);
+
+  // Group current page reviews by productId
   const groupedByProduct = Object.values(
-    filteredReviews.reduce((acc, review) => {
+    currentReviews.reduce((acc, review) => {
       if (!acc[review.productId]) {
         acc[review.productId] = {
           productName: review.productName,
@@ -92,6 +103,9 @@ const ReviewsList = () => {
       return acc;
     }, {})
   );
+
+  // عدد الصفحات الكلي
+  const totalPages = Math.ceil(filteredReviews.length / reviewsPerPage);
 
   if (loading) return <div className="text-center py-8">Loading...</div>;
 
@@ -192,9 +206,33 @@ const ReviewsList = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination controls */}
+      {filteredReviews.length > reviewsPerPage && (
+        <div className="flex justify-center items-center gap-6 mt-6">
+          <button
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 disabled:bg-gray-300"
+          >
+            Previous
+          </button>
+          <span className="text-lg">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
+            disabled={currentPage === totalPages}
+            className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 disabled:bg-gray-300"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };
 
 export default ReviewsList;
-

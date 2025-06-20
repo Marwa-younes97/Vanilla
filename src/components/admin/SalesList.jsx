@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react';
 
 const SalesList = () => {
   const [salesData, setSalesData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const salesPerPage = 10;
 
   useEffect(() => {
     const fetchSalesData = async () => {
       try {
         const token = localStorage.getItem("authToken");
 
-        // جلب الطلبات العادية
         const normalOrdersResponse = await fetch("https://bakeryproject-1onw.onrender.com/api/orders", {
           headers: {
             "Content-Type": "application/json",
@@ -29,7 +30,6 @@ const SalesList = () => {
         const normalOrders = await normalOrdersResponse.json();
         const customOrders = await customOrdersResponse.json();
 
-        // تصفية الطلبات العادية التي حالتها Delivered
         const deliveredNormal = normalOrders
           .filter(order => order.status === "Delivered")
           .flatMap(order =>
@@ -43,7 +43,6 @@ const SalesList = () => {
             }))
           );
 
-        // تصفية الطلبات المخصصة التي حالتها Delivered مع إضافة السعر الصحيح
         const deliveredCustom = customOrders
           .filter(order => order.status === "Delivered")
           .map(order => ({
@@ -51,11 +50,10 @@ const SalesList = () => {
             customer: order.user?.name || "N/A",
             product: "🎂 Custom Order",
             quantity: 1,
-            price: order.price || 0, // هنا يتم استخدام السعر الصحيح من البيانات المرسلة
+            price: order.price || 0,
             date: new Date(order.createdAt).toLocaleDateString(),
           }));
 
-        // دمج النوعين
         const allDelivered = [...deliveredNormal, ...deliveredCustom];
 
         setSalesData(allDelivered);
@@ -66,6 +64,13 @@ const SalesList = () => {
 
     fetchSalesData();
   }, []);
+
+  // Pagination calculation
+  const indexOfLastSale = currentPage * salesPerPage;
+  const indexOfFirstSale = indexOfLastSale - salesPerPage;
+  const currentSales = salesData.slice(indexOfFirstSale, indexOfLastSale);
+
+  const totalPages = Math.ceil(salesData.length / salesPerPage);
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
@@ -84,8 +89,8 @@ const SalesList = () => {
             </tr>
           </thead>
           <tbody className="text-gray-700">
-            {salesData.length > 0 ? (
-              salesData.map((sale, index) => (
+            {currentSales.length > 0 ? (
+              currentSales.map((sale, index) => (
                 <tr key={index} className="border-b border-gray-200 hover:bg-gray-100">
                   <td className="py-3 px-6">{sale.orderId}</td>
                   <td className="py-3 px-6">{sale.customer}</td>
@@ -103,9 +108,33 @@ const SalesList = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination Controls */}
+      {salesData.length > salesPerPage && (
+        <div className="flex justify-center items-center gap-6 mt-6">
+          <button
+            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+            disabled={currentPage === 1}
+            className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 disabled:bg-gray-300"
+          >
+            Previous
+          </button>
+          <span className="text-lg">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+            disabled={currentPage === totalPages}
+            className="bg-gray-500 text-white py-2 px-4 rounded hover:bg-gray-600 disabled:bg-gray-300"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };
 
 export default SalesList;
+
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaReply, FaTrash } from "react-icons/fa";
+import { FaReply, FaTrash, FaCheck } from "react-icons/fa";
 import Toast from "./Toast";
 
 const ContactMessages = () => {
@@ -166,14 +166,15 @@ const currentMessages = messages.slice(indexOfFirstMessage, indexOfLastMessage);
                       onClick={() =>
                         handleShowReplyModal(msg.reply, msg.repliedAt)
                       }
-                      className="text-green-600 font-medium underline hover:text-green-800"
+                      // className="text-green-600 font-medium underline hover:text-green-800"
+                      className="flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white text-xs py-1 px-2 rounded w-20 items-center justify-center"
                     >
-                      Replied
+                      <FaCheck />Replied
                     </button>
                   ) : (
                     <button
                       onClick={() => handleReplyClick(msg._id)}
-                      className="flex items-center gap-1 bg-pink-600 hover:bg-pink-700 text-white text-xs py-1 px-2 rounded"
+                      className="flex items-center gap-1 bg-pink-600 hover:bg-pink-700 text-white text-xs py-1 px-2 rounded w-20 items-center justify-center"
                     >
                       <FaReply /> Reply
                     </button>
@@ -202,7 +203,7 @@ const currentMessages = messages.slice(indexOfFirstMessage, indexOfLastMessage);
       </div>
 
       {/* Modal to send reply */}
-      {showModal && (
+      {/* {showModal && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded shadow-lg w-96">
             <h3 className="text-lg font-semibold mb-4">Reply to Message</h3>
@@ -228,10 +229,43 @@ const currentMessages = messages.slice(indexOfFirstMessage, indexOfLastMessage);
             </div>
           </div>
         </div>
-      )}
+      )} */}
+{/* Modal to send reply */}
+{showModal && (
+  <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center px-4">
+    <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-2xl animate-fade-in">
+      <h3 className="text-xl font-semibold text-pink-600 mb-4 text-center">
+        Reply to Message
+      </h3>
+
+      <textarea
+        value={responseText}
+        onChange={handleReplyChange}
+        className="w-full p-3 border rounded-lg mb-4 resize-none focus:outline-pink-500"
+        rows={6}
+        placeholder="Type your reply here..."
+      />
+
+      <div className="mt-6 flex justify-end space-x-3">
+        <button
+          onClick={() => setShowModal(false)}
+          className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleSendReply}
+          className="bg-pink-600 hover:bg-pink-700 text-white px-4 py-2 rounded-md"
+        >
+          Send Reply
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 
       {/* Modal to view reply */}
-      {showReplyModal && (
+      {/* {showReplyModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md">
             <h3 className="text-lg font-bold mb-4 text-green-700">
@@ -255,7 +289,45 @@ const currentMessages = messages.slice(indexOfFirstMessage, indexOfLastMessage);
             </div>
           </div>
         </div>
-      )}
+      )} */}
+      {/* Modal to view reply */}
+{showReplyModal && (
+  <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center px-4">
+    <div className="bg-white p-6 rounded-lg w-full max-w-md shadow-2xl animate-fade-in">
+      <h2 className="text-xl font-semibold text-green-700 mb-4 text-center">
+        Reply Details
+      </h2>
+
+      <div className="space-y-4 max-h-64 overflow-y-auto pr-2">
+        <div className="border rounded-lg px-4 py-3 bg-gray-50 shadow-sm">
+          <p className="text-sm">
+            <span className="font-medium text-gray-700">Reply:</span>
+            <br />
+            {replyContent}
+          </p>
+        </div>
+
+        <div className="border rounded-lg px-4 py-3 bg-gray-50 shadow-sm">
+          <p className="text-sm text-gray-500">
+            <span className="font-medium">Replied At:</span>{" "}
+            {new Date(replyDate).toLocaleString()}
+          </p>
+        </div>
+      </div>
+
+      {/* زر الإغلاق */}
+      <div className="mt-6 flex justify-end">
+        <button
+          onClick={() => setShowReplyModal(false)}
+          className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-md"
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
       {/* Toast Notification */}
       <Toast visible={toastVisible} message={toastMessage} />
       {messages.length > 0 && (
