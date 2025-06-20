@@ -95,7 +95,7 @@ const Login = ({ onClose, onSignUpClick, setIsLoggedIn }) => {
                 className="w-full p-4 border border-gray-300 rounded-md mt-2 focus:outline-none focus:ring-2 focus:ring-pink-500 text-black"
               />
             </div>
-
+{/* 
             <div className="mb-6 flex justify-between items-center">
               <button
                 type="button"
@@ -104,7 +104,7 @@ const Login = ({ onClose, onSignUpClick, setIsLoggedIn }) => {
               >
                 Forgot your password?
               </button>
-            </div>
+            </div> */}
 
             <button
               type="submit"
