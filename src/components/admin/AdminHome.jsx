@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Select from "react-select";
+
 import {
   AreaChart,
   Area,
@@ -128,6 +130,61 @@ const AdminHome = () => {
   const handleDateFilterChange = (e) => {
     setDateFilter(e.target.value);
   };
+const customStyles = {
+  option: (provided, state) => ({
+    ...provided,
+    backgroundColor: state.isFocused ? "#fbcfe8" : "white",
+    color: "black",
+  }),
+  control: (provided, state) => ({
+    ...provided,
+    borderColor: state.isFocused ? "#f472b6" : "#ccc",
+    boxShadow: state.isFocused ? "0 0 0 1px #f472b6" : "none",
+    "&:hover": {
+      borderColor: "#f472b6",
+    },
+  }),
+  menu: (provided) => ({
+    ...provided,
+    border: "none",
+    borderRadius: "0.375rem",
+    marginTop: "2px",
+  }),
+  menuList: (provided) => ({
+    ...provided,
+    padding: 0,
+  }),
+  clearIndicator: (provided) => ({
+    ...provided,
+    display: "none",
+  }),
+};
+
+const MyComponent = () => {
+  const [statusFilter, setStatusFilter] = useState("");
+
+  return (
+    <Select
+      value={
+        statusFilter
+          ? { label: statusFilter, value: statusFilter }
+          : { label: "All Statuses", value: "" }
+      }
+      onChange={(selectedOption) =>
+        setStatusFilter(selectedOption ? selectedOption.value : "")
+      }
+      options={[
+        { label: "All Statuses", value: "" },
+        { label: "Pending", value: "Pending" },
+        { label: "Processing", value: "Processing" },
+        { label: "Shipped", value: "Shipped" },
+        { label: "Cancelled", value: "Cancelled" },
+      ]}
+      styles={customStyles}
+      placeholder="Filter by status"
+    />
+  );
+};
 
   return (
     <div className="p-8 min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100">
@@ -145,19 +202,32 @@ const AdminHome = () => {
             <option value="all">All Time</option>
           </select>
         </div> */}
+<div className="flex items-center gap-4 mb-8">
+  <Select
+    value={{
+      label:
+        dateFilter === "30days"
+          ? "Last 30 Days"
+          : dateFilter === "7days"
+          ? "Last 7 Days"
+          : dateFilter === "today"
+          ? "Today"
+          : "All Time",
+      value: dateFilter,
+    }}
+    onChange={(selectedOption) => setDateFilter(selectedOption.value)}
+    options={[
+      { label: "Last 30 Days", value: "30days" },
+      { label: "Last 7 Days", value: "7days" },
+      { label: "Today", value: "today" },
+      { label: "All Time", value: "all" },
+    ]}
+    styles={customStyles}
+    placeholder="Filter by date"
+  />
+</div>
 
-        <div className="flex items-center gap-4 mb-8">
-          <select
-            value={dateFilter}
-            onChange={handleDateFilterChange}
-            className="p-3 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
-          >
-            <option value="30days">Last 30 Days</option>
-            <option value="7days">Last 7 Days</option>
-            <option value="today">Today</option>
-            <option value="all">All Time</option>
-          </select>
-        </div>
+
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10 animate__fadeInUp">
