@@ -3,6 +3,7 @@ import Slider from 'react-slick';
 import { MessageCircle, ImagePlus } from 'lucide-react';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import axios from 'axios';
 
 const birthdayImages = [
   'https://i.etsystatic.com/25006701/r/il/9b95b1/2621742376/il_1588xN.2621742376_1k19.jpg',
@@ -11,8 +12,6 @@ const birthdayImages = [
   'https://th.bing.com/th/id/OIP.yxJF_8lRMRM28zC0SdLSswAAAA?cb=iwc2&rs=1&pid=ImgDetMain',
   'https://www.deliciaecakes.com/static/9b62158c17917c27a305fa088ef7c9fc/3d-2158.jpg',
   'https://www.fabmood.com/inspiration/wp-content/uploads/2020/05/cake-designs-7.jpg',
-  
-
 ];
 
 const BirthdayPage = () => {
@@ -41,14 +40,36 @@ const BirthdayPage = () => {
     ],
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // هنا تضيف منطق إرسال البيانات أو ما تريد
-    alert('Birthday order submitted!');
-    setDescription('');
-    setDesignImage('');
-    setDeliveryDate('');
-    setSelectedImage(null);
+
+    const token = localStorage.getItem('authToken');
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    };
+
+    const deliveryDateISO = new Date(deliveryDate).toISOString();
+
+    const data = {
+      description,
+      designImage,
+      deliveryDate: deliveryDateISO,
+    };
+
+    try {
+      await axios.post('https://bakeryproject-1onw.onrender.com/api/custom-orders', data, config);
+      alert('Order submitted successfully!');
+      setDescription('');
+      setDesignImage('');
+      setDeliveryDate('');
+      setSelectedImage(null);
+    } catch (error) {
+      console.error('Error submitting order:', error.response || error);
+      alert('Failed to submit the order.');
+    }
   };
 
   return (
@@ -142,7 +163,8 @@ const BirthdayPage = () => {
 
         <div className="flex justify-center items-center">
           <button className="w-[300px] text-center text-pink-700 bg-white hover:bg-pink-700 hover:text-white py-3 px-6 rounded-lg font-bold transition-all duration-300">
-          Confirm Order          </button>
+            Confirm Order
+          </button>
         </div>
       </form>
     </div>

@@ -1,18 +1,15 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaStar, FaRegStar } from "react-icons/fa";
 import { toast } from "react-toastify";
+import { useCart } from "../context/CartContext";
 
-// دالة لفك شفرة JWT
 function parseJwt(token) {
   try {
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
+      atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')
     );
     return JSON.parse(jsonPayload);
   } catch {
@@ -23,6 +20,7 @@ function parseJwt(token) {
 const ProductDetails = () => {
   const { productId } = useParams();
   const navigate = useNavigate();
+  const { addToCart } = useCart();
 
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
@@ -31,52 +29,43 @@ const ProductDetails = () => {
   const [userInfo, setUserInfo] = useState(null);
 
   const token = localStorage.getItem("authToken");
-
   const userData = parseJwt(token);
   const userId = userData?.id;
 
-  // جلب بيانات المنتج
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const response = await fetch("https://bakeryproject-1onw.onrender.com/api/products/all");
-        const data = await response.json();
-        const selectedProduct = data.find((p) => p._id === productId);
-        setProduct(selectedProduct);
+        const res = await fetch("https://bakeryproject-1onw.onrender.com/api/products/all");
+        const data = await res.json();
+        const currentProduct = data.find(p => p._id === productId);
+        setProduct(currentProduct);
 
-        const related = data.filter((p) => p.category === selectedProduct.category && p._id !== productId);
+        const related = data.filter(p => p.category === currentProduct.category && p._id !== productId);
         setRelatedProducts(related.slice(0, 4));
-      } catch (error) {
-        console.error("Error fetching product:", error);
+      } catch (err) {
+        console.error("Error fetching product:", err);
       }
     };
 
     fetchProduct();
   }, [productId]);
 
-  // جلب بيانات المستخدم
   useEffect(() => {
-    const fetchUserInfo = async () => {
+    const fetchUser = async () => {
       if (!userId || !token) return;
-
       try {
-        const response = await fetch(`https://bakeryproject-1onw.onrender.com/api/users/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const res = await fetch(`https://bakeryproject-1onw.onrender.com/api/users/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
-
-        const data = await response.json();
+        const data = await res.json();
         setUserInfo(data);
-      } catch (error) {
-        console.error("Error fetching user info:", error);
+      } catch (err) {
+        console.error("Error fetching user info:", err);
       }
     };
-
-    fetchUserInfo();
+    fetchUser();
   }, [userId, token]);
 
-  // إرسال الريفيو
   const handleReviewSubmit = async (e) => {
     e.preventDefault();
     if (!newRating || !newComment) {
@@ -87,7 +76,7 @@ const ProductDetails = () => {
     const userName = userInfo?.name || userInfo?.email || "Anonymous";
 
     try {
-      const response = await fetch(
+      const res = await fetch(
         `https://bakeryproject-1onw.onrender.com/api/products/${productId}/reviews`,
         {
           method: "POST",
@@ -99,11 +88,9 @@ const ProductDetails = () => {
         }
       );
 
-      const result = await response.json();
+      const result = await res.json();
 
-      if (!response.ok) {
-        throw new Error(result.message || "Failed to submit review");
-      }
+      if (!res.ok) throw new Error(result.message || "Failed to submit review");
 
       toast.success("Review submitted!");
       setProduct((prev) => ({
@@ -120,20 +107,16 @@ const ProductDetails = () => {
   if (!product) return <div className="text-center p-6">Loading...</div>;
 
   const averageRating =
-    product.reviews && product.reviews.length > 0
+    product.reviews?.length > 0
       ? product.reviews.reduce((acc, r) => acc + r.rating, 0) / product.reviews.length
       : 0;
 
   return (
     <div className="max-w-6xl mx-auto p-6 mt-28">
-      <button
-        onClick={() => navigate(-1)}
-        className="mb-4 text-pink-600 font-semibold hover:underline"
-      >
+      <button onClick={() => navigate(-1)} className="mb-4 text-pink-600 font-semibold hover:underline">
         ← Back
       </button>
 
-      {/* Product Card */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white p-6 rounded-2xl shadow-lg">
         <img
           src={product.image}
@@ -145,7 +128,6 @@ const ProductDetails = () => {
           <div>
             <h2 className="text-3xl font-bold mb-2">{product.name}</h2>
             <p className="text-gray-600 mb-3 text-base leading-relaxed">{product.description}</p>
-
             <span
               className={`inline-block px-4 py-1 mb-3 text-sm font-semibold rounded-full text-white ${
                 product.availability ? "bg-green-500" : "bg-red-500"
@@ -169,7 +151,7 @@ const ProductDetails = () => {
           </div>
 
           <button
-            onClick={() => alert("Added to cart!")}
+            onClick={() => addToCart(product)}
             className="bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3 px-8 rounded-2xl transition duration-300 transform hover:scale-105"
           >
             Add to Cart
@@ -281,7 +263,7 @@ const ProductDetails = () => {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    alert("Added to cart!");
+                    addToCart(relatedProduct);
                   }}
                   className="bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3 px-8 rounded-2xl transition duration-300 transform hover:scale-105"
                 >
