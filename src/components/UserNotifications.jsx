@@ -1,60 +1,37 @@
-// components/UserNotifications.jsx
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { Bell } from "lucide-react";
 
-export default function UserNotifications() {
-  const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem("authToken");
-
-    if (!token) {
-      setError("You must be logged in to view notifications.");
-      setLoading(false);
-      return;
-    }
-
-    fetch("https://bakeryproject-1onw.onrender.com/api/notifications", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch notifications.");
-        return res.json();
-      })
-      .then((data) => {
-        setNotifications(data);
-      })
-      .catch((err) => {
-        console.error(err);
-        setError(err.message);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
-
-  if (loading) return <p className="text-gray-600">Loading notifications...</p>;
-  if (error) return <p className="text-red-600">{error}</p>;
+export default function UserNotifications({ notifications = [] }) {
+  const timeAgo = (date) => {
+    const diff = Math.floor((new Date() - new Date(date)) / 1000); // seconds
+    if (diff < 60) return "just now";
+    if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)} hrs ago`;
+    return new Date(date).toLocaleDateString();
+  };
 
   if (notifications.length === 0)
     return <p className="text-gray-600">No notifications yet.</p>;
 
   return (
-    <ul className="space-y-4">
+    <div className="space-y-4 mt-4">
+      <h2 className="text-2xl font-bold mb-6 text-pink-600">Notifications</h2>
       {notifications.map((notification) => (
-        <li
+        <div
           key={notification._id}
-          className="p-4 rounded-lg shadow bg-pink-50 border border-pink-200"
+          className="flex items-start gap-4 p-4 rounded-xl border border-pink-200 bg-white shadow-sm hover:shadow-md transition"
         >
-          <p className="text-gray-800 font-medium">{notification.message}</p>
-          <p className="text-xs text-gray-500 mt-1">
-            {new Date(notification.createdAt).toLocaleString()}
-          </p>
-        </li>
+          <div className="bg-pink-100 p-2 rounded-full">
+            <Bell className="w-5 h-5 text-pink-500" />
+          </div>
+          <div className="flex-1">
+            <p className="text-gray-800 font-medium">{notification.message}</p>
+            <p className="text-xs text-gray-500 mt-1">
+              {timeAgo(notification.createdAt)}
+            </p>
+          </div>
+        </div>
       ))}
-    </ul>
+    </div>
   );
 }

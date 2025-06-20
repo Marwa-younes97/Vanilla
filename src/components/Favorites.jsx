@@ -22,8 +22,8 @@ const Favorites = () => {
 
   return (
     <div className="w-full">
-      <h2 className="text-2xl font-bold mb-4 text-pink-700">
-        My Favorite Products
+      <h2 className="text-2xl font-bold mb-6 text-pink-600">
+        Favorite Products
       </h2>
 
       {favorites.length > 0 ? (

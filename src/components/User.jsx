@@ -3,17 +3,7 @@ import { useNavigate } from "react-router-dom";
 import UserNotifications from "./UserNotifications";
 import Favorites from "./Favorites";
 
-
-import {
-  Pencil,
-  Bell,
-  User,
-  Settings,
-  HelpCircle,
-  Clock,
-  MessageCircle,
-  Star,
-} from "lucide-react";
+import { Pencil, Bell, User, MessageCircle, Star } from "lucide-react";
 
 export default function UserProfile() {
   const navigate = useNavigate();
@@ -31,6 +21,10 @@ export default function UserProfile() {
   const fileInputRef = useRef(null);
   const [activeTab, setActiveTab] = useState("profile");
   const [messages, setMessages] = useState([]);
+  const [hasNewNotifications, setHasNewNotifications] = useState(false);
+  const [hasNewMessages, setHasNewMessages] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
@@ -110,6 +104,15 @@ export default function UserProfile() {
       .then((data) => {
         const repliedMessages = data.data.filter((msg) => msg.reply);
         setMessages(repliedMessages);
+
+        if (repliedMessages.length > 0) {
+          const latest = repliedMessages[0];
+          const latestTime = new Date(latest.repliedAt);
+          const threshold = new Date(Date.now() - 60 * 60 * 1000); // خلال آخر ساعة
+          if (latestTime > threshold) {
+            setHasNewMessages(true);
+          }
+        }
       })
       .catch((err) => console.error("Error fetching messages:", err));
   }, []);
@@ -119,6 +122,48 @@ export default function UserProfile() {
       fileInputRef.current.click();
     }
   };
+useEffect(() => {
+  const token = localStorage.getItem("authToken");
+  if (!token) return;
+
+  fetch("https://bakeryproject-1onw.onrender.com/api/notifications", {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("Failed to fetch notifications");
+      return res.json();
+    })
+    .then((data) => setNotifications(data))
+    .catch((err) => console.error("Error fetching notifications:", err));
+}, []);
+
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (!token) return;
+
+    fetch("https://bakeryproject-1onw.onrender.com/api/notifications", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch notifications");
+        return res.json();
+      })
+      .then((data) => {
+        if (data?.length > 0) {
+          const latest = data[0];
+          const latestTime = new Date(latest.createdAt);
+          const threshold = new Date(Date.now() - 60 * 60 * 1000); // آخر ساعة
+          if (latestTime > threshold) {
+            setHasNewNotifications(true);
+          }
+        }
+      })
+      .catch((err) => {
+        console.error("Error checking notifications:", err);
+      });
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -173,25 +218,35 @@ export default function UserProfile() {
     }
   }, [userData.image]);
 
+  useEffect(() => {
+  if (activeTab === "notifications" && hasNewNotifications) {
+    setHasNewNotifications(false);
+  }
+
+  if (activeTab === "messages" && hasNewMessages) {
+    setHasNewMessages(false);
+  }
+}, [activeTab]);
+
   function ProfileSkeleton() {
-  return (
-    <div className="p-6 animate-pulse space-y-6">
-      <div className="flex items-center gap-4">
-        <div className="w-24 h-24 bg-gray-300 rounded-full"></div>
-        <div className="flex flex-col gap-2">
-          <div className="w-40 h-4 bg-gray-300 rounded"></div>
-          <div className="w-32 h-4 bg-gray-300 rounded"></div>
+    return (
+      <div className="p-6 animate-pulse space-y-6">
+        <div className="flex items-center gap-4">
+          <div className="w-24 h-24 bg-gray-300 rounded-full"></div>
+          <div className="flex flex-col gap-2">
+            <div className="w-40 h-4 bg-gray-300 rounded"></div>
+            <div className="w-32 h-4 bg-gray-300 rounded"></div>
+          </div>
+        </div>
+
+        <div className="space-y-4 mt-6">
+          <div className="w-full h-10 bg-gray-200 rounded"></div>
+          <div className="w-full h-10 bg-gray-200 rounded"></div>
+          <div className="w-full h-10 bg-gray-300 rounded"></div>
         </div>
       </div>
-
-      <div className="space-y-4 mt-6">
-        <div className="w-full h-10 bg-gray-200 rounded"></div>
-        <div className="w-full h-10 bg-gray-200 rounded"></div>
-        <div className="w-full h-10 bg-gray-300 rounded"></div>
-      </div>
-    </div>
-  );
-}
+    );
+  }
 
   const imageSrc = userData.image
     ? userData.image.startsWith("blob:")
@@ -207,7 +262,8 @@ export default function UserProfile() {
   return (
     <div className="min-h-screen w-full flex flex-col lg:flex-row bg-white ">
       {/* Sidebar */}
-      <aside className="w-full lg:w-64 bg-pink-50 p-6 flex flex-col justify-between min-h-screen">
+      <aside className="w-full lg:w-64 bg-pink-50 p-6 flex flex-col justify-between sticky top-0 h-screen overflow-auto">
+
         <div>
           <div className="flex items-center gap-3 mb-6">
             <img
@@ -230,7 +286,14 @@ export default function UserProfile() {
               },
               {
                 label: "Messages",
-                icon: <MessageCircle className="w-5 h-5" />,
+                icon: (
+                  <div className="relative">
+                    <MessageCircle className="w-5 h-5" />
+                    {hasNewMessages && (
+                      <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-red-500" />
+                    )}
+                  </div>
+                ),
                 id: "messages",
               },
               // { label: "Favorites", icon: <Star className="w-5 h-5" />, id: "favorites" },
@@ -241,35 +304,26 @@ export default function UserProfile() {
               },
               {
                 label: "Notifications",
-                icon: <Bell className="w-5 h-5" />,
+                icon: (
+                  <div className="relative">
+                    <Bell className="w-5 h-5" />
+                    {hasNewNotifications && (
+                      <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-red-500" />
+                    )}
+                  </div>
+                ),
                 id: "notifications",
               },
-              // {
-              //   label: "Activity",
-              //   icon: <Clock className="w-5 h-5" />,
-              //   id: "activity",
-              // },
-              // {
-              //   label: "Settings",
-              //   icon: <Settings className="w-5 h-5" />,
-              //   id: "settings",
-              // },
-              // {
-              //   label: "Help",
-              //   icon: <HelpCircle className="w-5 h-5" />,
-              //   id: "help",
-              // },
             ].map(({ label, icon, id }) => (
-<button
-  key={id}
-  onClick={() => setActiveTab(id)}
-  className={`flex items-center gap-3 font-medium cursor-pointer bg-transparent border-none p-0 ${
-    activeTab === id ? "text-pink-600" : "text-black"
-  }`}
->
-  {icon} {label}
-</button>
-
+              <button
+                key={id}
+                onClick={() => setActiveTab(id)}
+                className={`flex items-center gap-3 font-medium cursor-pointer bg-transparent border-none p-0 ${
+                  activeTab === id ? "text-pink-600" : "text-black"
+                }`}
+              >
+                {icon} {label}
+              </button>
             ))}
           </nav>
         </div>
@@ -366,82 +420,54 @@ export default function UserProfile() {
             {error && <p className="mt-4 text-red-600">{error}</p>}
           </div>
         )}
-
         {activeTab === "messages" && (
           <div>
-            <h2 className="text-2xl font-bold mb-4 text-black">
-              Messages with Replies
-            </h2>
+            <h2 className="text-2xl font-bold mb-6 text-pink-600">Inbox</h2>
+
             {messages.length === 0 ? (
-              <p className="text-gray-600">No replied messages available.</p>
+              <p className="text-gray-500 text-center mt-10">
+                You have no messages with replies yet.
+              </p>
             ) : (
-              <ul className="space-y-4">
+              <div className="space-y-4">
                 {messages.map((msg) => (
-                  <li
+                  <div
                     key={msg._id}
-                    className="border p-4 rounded-lg shadow-sm bg-gray-50"
+                    className="flex items-start gap-4 bg-white shadow-sm border border-gray-200 rounded-lg p-4 hover:shadow-md transition"
                   >
-                    <p className="text-sm text-gray-800">
-                      <strong>Subject:</strong> {msg.subject}
-                    </p>
-                    <p className="text-sm text-pink-600 mt-2">
-                      <strong>Reply:</strong> {msg.reply}
-                    </p>
-                    {msg.repliedAt && (
-                      <p className="text-xs text-gray-400 mt-1">
-                        Replied at: {new Date(msg.repliedAt).toLocaleString()}
-                      </p>
-                    )}
-                  </li>
+                    <div className="flex-shrink-0 bg-pink-100 text-pink-600 rounded-full w-10 h-10 flex items-center justify-center">
+                      <MessageCircle className="w-5 h-5" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center mb-1">
+                        <h3 className="font-semibold text-gray-800">
+                          {msg.subject}
+                        </h3>
+                        {msg.repliedAt && (
+                          <span className="text-xs text-gray-400">
+                            {new Date(msg.repliedAt).toLocaleString()}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-sm text-gray-600">{msg.reply}</p>
+                    </div>
+                  </div>
                 ))}
-              </ul>
+              </div>
             )}
           </div>
         )}
-
-        {/* {activeTab === "favorites" && (
-          <div>
-            <h2 className="text-2xl font-bold mb-4 text-black">Favorites</h2>
-            {userData.favorites.length === 0 ? (
-              <p className="text-gray-600">No favorites added yet.</p>
-            ) : (
-              <ul className="list-disc pl-6 text-gray-700">
-                {userData.favorites.map((item, index) => (
-                  <li key={index}>{item}</li>
-                ))}
-              </ul>
-            )}
+        {activeTab === "favorites" && (
+          <div className="mt-4">
+            <Favorites />
           </div>
-        )} */}
-
-{activeTab === "favorites" && (
+        )}
+{activeTab === "notifications" && (
   <div className="mt-4">
-    <Favorites />
+    <UserNotifications notifications={notifications} />
   </div>
 )}
 
-        {/* {activeTab === "activity" && (
-          <div>
-            <h2 className="text-2xl font-bold mb-4 text-black">Activity</h2>
-            <p className="text-gray-600">No activity data available.</p>
-          </div>
-        )}
-
-        {activeTab === "settings" && (
-          <div>
-            <h2 className="text-2xl font-bold mb-4 text-black">Settings</h2>
-            <p className="text-gray-600">Settings page is under development.</p>
-          </div>
-        )}
-
-        {activeTab === "help" && (
-          <div>
-            <h2 className="text-2xl font-bold mb-4 text-black">Help</h2>
-            <p className="text-gray-600">
-              Help content will be available soon.
-            </p>
-          </div>
-        )} */}
       </main>
     </div>
   );
