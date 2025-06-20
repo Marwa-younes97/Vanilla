@@ -253,6 +253,8 @@
 
 import React, { useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
+import { FaSignOutAlt } from "react-icons/fa";
+
 import {
   FaChevronDown,
   FaChevronUp,
@@ -281,6 +283,7 @@ import SiteSettings from "./admin/SiteSettings";
 import AdminHome from "./admin/AdminHome";
 import CustomOrders from "./admin/CustomOrders";
 import { FaTimes } from "react-icons/fa";
+import "../App.css"; 
 
 const AdminDashboard = () => {
   const [openMenu, setOpenMenu] = useState("");
@@ -289,6 +292,11 @@ const AdminDashboard = () => {
   const toggleMenu = (menu) => {
     setOpenMenu(openMenu === menu ? "" : menu);
   };
+
+const handleLogout = () => {
+  localStorage.removeItem("authToken");
+  window.location.href = "/login"; // أو استخدم navigate من react-router
+};
 
   const toggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
@@ -346,84 +354,102 @@ const AdminDashboard = () => {
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <aside
-        className={`fixed z-50 inset-y-0 left-0 w-64 bg-gray-800 text-white flex flex-col overflow-auto transform transition-transform duration-300 ease-in-out
+      {/* <aside
+        className={`fixed z-50 inset-y-0 left-0 w-64 bg-gray-800 text-white flex flex-col  transform transition-transform duration-300 ease-in-out
           md:static md:translate-x-0
           ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+      > */}
+      <aside
+  className={`custom-scrollbar fixed z-50 inset-y-0 left-0 w-64 bg-gray-800 text-white flex flex-col
+    transform transition-transform duration-300 ease-in-out
+    md:static md:translate-x-0
+    ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}
+>
+  {/* عنوان البانل */}
+  <Link
+    to="/admin"
+    className="text-center text-2xl font-bold p-6 border-b border-gray-600 hover:text-pink-400 flex-shrink-0"
+    onClick={() => setSidebarOpen(false)}
+  >
+    Admin Panel
+  </Link>
+
+  {/* ✅ عنصر قابل للتمرير يحتوي على كل شيء */}
+  <div className="flex-1 overflow-auto">
+    <nav className="p-4 space-y-4">
+      {/* Visit Site */}
+      <a
+        href="/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center p-2 hover:bg-gray-700 rounded hover:text-pink-400"
       >
-        <Link
-          to="/admin"
-          className="text-center text-2xl font-bold p-6 border-b border-gray-600 hover:text-pink-400 flex-shrink-0"
-          onClick={() => setSidebarOpen(false)} // اغلاق عند الضغط على الرابط
-        >
-          Admin Panel
-        </Link>
-        {/* زر إغلاق يظهر فقط في الشاشات الصغيرة */}
-{/* <button
-      onClick={() => setSidebarOpen(false)}
-      className="md:hidden p-2 rounded-full hover:bg-pink-600 transition-colors duration-200 focus:outline-none"
-      aria-label="Close sidebar"
-    >
-      <FaTimes size={20} />
-    </button> */}
-        <a
-          href="/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center p-2 hover:bg-gray-700 rounded hover:text-pink-400 mx-4 mt-4"
-        >
-          <FaHome />
-          <span className="ml-2">Visit Site</span>
-        </a>
-        <nav className="flex-1 p-4 space-y-4 overflow-auto">
-          {menuItems.map((menu) =>
-            menu.items.length === 1 ? (
-              <Link
-                key={menu.title}
-                to={menu.items[0].path}
-                className="flex items-center p-2 hover:bg-gray-700 rounded hover:text-pink-400"
-                onClick={() => setSidebarOpen(false)} // اغلاق عند الضغط على الرابط
-              >
+        <FaHome />
+        <span className="ml-2">Visit Site</span>
+      </a>
+
+      {/* القائمة الرئيسية */}
+      {menuItems.map((menu) =>
+        menu.items.length === 1 ? (
+          <Link
+            key={menu.title}
+            to={menu.items[0].path}
+            className="flex items-center p-2 hover:bg-gray-700 rounded hover:text-pink-400"
+            onClick={() => setSidebarOpen(false)}
+          >
+            {menu.icon}
+            {menu.title}
+          </Link>
+        ) : (
+          <div key={menu.title}>
+            <button
+              onClick={() => toggleMenu(menu.title)}
+              className="w-full flex justify-between items-center p-2 hover:bg-gray-700 rounded"
+            >
+              <span className="flex items-center">
                 {menu.icon}
                 {menu.title}
-              </Link>
-            ) : (
-              <div key={menu.title}>
-                <button
-                  onClick={() => toggleMenu(menu.title)}
-                  className="w-full flex justify-between items-center p-2 hover:bg-gray-700 rounded"
-                >
-                  <span className="flex items-center">
-                    {menu.icon}
-                    {menu.title}
-                  </span>
-                  <span>
-                    {openMenu === menu.title ? (
-                      <FaChevronUp className="ml-2" />
-                    ) : (
-                      <FaChevronDown className="ml-2" />
-                    )}
-                  </span>
-                </button>
-                {openMenu === menu.title && (
-                  <div className="pl-4 mt-2 space-y-2">
-                    {menu.items.map((subItem) => (
-                      <Link
-                        key={subItem.label}
-                        to={subItem.path}
-                        className="block hover:text-pink-400"
-                        onClick={() => setSidebarOpen(false)} // اغلاق عند الضغط على الرابط
-                      >
-                        {subItem.label}
-                      </Link>
-                    ))}
-                  </div>
+              </span>
+              <span>
+                {openMenu === menu.title ? (
+                  <FaChevronUp className="ml-2" />
+                ) : (
+                  <FaChevronDown className="ml-2" />
                 )}
+              </span>
+            </button>
+            {openMenu === menu.title && (
+              <div className="pl-4 mt-2 space-y-2">
+                {menu.items.map((subItem) => (
+                  <Link
+                    key={subItem.label}
+                    to={subItem.path}
+                    className="block hover:text-pink-400"
+                    onClick={() => setSidebarOpen(false)}
+                  >
+                    {subItem.label}
+                  </Link>
+                ))}
               </div>
-            )
-          )}
-        </nav>
-      </aside>
+            )}
+          </div>
+        )
+      )}
+
+      {/* زر Logout في نهاية القائمة */}
+      <div className="pt-6 border-t border-gray-700">
+        <button
+          onClick={handleLogout}
+          className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded transition"
+        >
+          <FaSignOutAlt />
+          Logout
+        </button>
+      </div>
+    </nav>
+  </div>
+</aside>
+
 {sidebarOpen && (
   <button
     onClick={() => setSidebarOpen(false)}

@@ -52,6 +52,7 @@
   }
 }
 
-.Nav-height{
-  height: 100px !important;
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #eee transparent; /* Tailwind pink-500 */
 }
