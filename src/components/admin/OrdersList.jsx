@@ -27,7 +27,7 @@ const OrdersList = () => {
 
         if (!response.ok) throw new Error("Unauthorized or failed to fetch");
         const data = await response.json();
-
+        console.log("✅ Orders from API:", data);
         // استبعاد الطلبات التي حالتها Delivered
         const activeOrders = data.filter(
           (order) => order.status !== "Delivered"
@@ -299,6 +299,10 @@ const OrdersList = () => {
 
   {/* إضافة معلومات التوصيل ورقم التواصل */}
   <div className="mt-4 border-t pt-4">
+      <h3 className="text-xl font-semibold text-pink-600 mb-4 text-center">
+    Delivery Information
+  </h3>
+  {/* <div className="border rounded-lg px-4 py-3 bg-gray-50 shadow-sm">
     <p className="text-sm">
       <span className="font-medium text-gray-700">Delivery Location:</span>{" "}
       {selectedOrder.deliveryLocation || "N/A"}
@@ -307,6 +311,18 @@ const OrdersList = () => {
       <span className="font-medium text-gray-700">Contact Phone:</span>{" "}
       {selectedOrder.contactPhone || "N/A"}
     </p>
+    </div> */}
+    <div className="border rounded-lg px-4 py-3 bg-gray-50 shadow-sm">
+  <p className="text-sm">
+    <span className="font-medium text-gray-700">Delivery Location:</span>{" "}
+    {selectedOrder.deliveryLocation ? selectedOrder.deliveryLocation : "Not provided"}
+  </p>
+  <p className="text-sm mt-2">
+    <span className="font-medium text-gray-700">Contact Phone:</span>{" "}
+    {selectedOrder.contactPhone ? selectedOrder.contactPhone : "Not provided"}
+  </p>
+</div>
+
   </div>
 </div>
 

@@ -50,7 +50,12 @@ const Cart = () => {
       alert("Please fill in contact phone and delivery location.");
       return;
     }
-
+  // ✅ طباعة القيم في الـ console
+  console.log("📦 Sending Order With:");
+  console.log("📞 Contact Phone:", contactPhone);
+  console.log("📍 Delivery Location:", deliveryLocation);
+  console.log("🛒 Cart:", cart);
+  
     try {
       const orderResponse = await fetch("https://bakeryproject-1onw.onrender.com/api/orders", {
         method: "POST",
