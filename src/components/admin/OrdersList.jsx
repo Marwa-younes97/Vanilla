@@ -277,26 +277,39 @@ const OrdersList = () => {
       </h2>
 
       <div className="space-y-4 max-h-64 overflow-y-auto pr-2">
-        {selectedOrder.products?.map((product, index) => (
-          <div
-            key={index}
-            className="border rounded-lg px-4 py-3 bg-gray-50 shadow-sm"
-          >
-            <p className="text-sm">
-              <span className="font-medium text-gray-700">Product:</span>{" "}
-              {product.name}
-            </p>
-            <p className="text-sm">
-              <span className="font-medium text-gray-700">Quantity:</span>{" "}
-              {product.quantity}
-            </p>
-            <p className="text-sm">
-              <span className="font-medium text-gray-700">Price:</span>{" "}
-              {product.price} EGP
-            </p>
-          </div>
-        ))}
-      </div>
+  {selectedOrder.products?.map((product, index) => (
+    <div
+      key={index}
+      className="border rounded-lg px-4 py-3 bg-gray-50 shadow-sm"
+    >
+      <p className="text-sm">
+        <span className="font-medium text-gray-700">Product:</span>{" "}
+        {product.name}
+      </p>
+      <p className="text-sm">
+        <span className="font-medium text-gray-700">Quantity:</span>{" "}
+        {product.quantity}
+      </p>
+      <p className="text-sm">
+        <span className="font-medium text-gray-700">Price:</span>{" "}
+        {product.price} EGP
+      </p>
+    </div>
+  ))}
+
+  {/* إضافة معلومات التوصيل ورقم التواصل */}
+  <div className="mt-4 border-t pt-4">
+    <p className="text-sm">
+      <span className="font-medium text-gray-700">Delivery Location:</span>{" "}
+      {selectedOrder.deliveryLocation || "N/A"}
+    </p>
+    <p className="text-sm mt-2">
+      <span className="font-medium text-gray-700">Contact Phone:</span>{" "}
+      {selectedOrder.contactPhone || "N/A"}
+    </p>
+  </div>
+</div>
+
 
       {/* زر الإغلاق */}
       <div className="mt-6 flex justify-end">
