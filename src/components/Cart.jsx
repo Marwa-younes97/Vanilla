@@ -7,6 +7,9 @@ const Cart = () => {
   const { cart, removeFromCart, updateQuantity, clearCart } = useCart();
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [currentCategory, setCurrentCategory] = useState('');
+  const [showFields, setShowFields] = useState(false);
+  const [contactPhone, setContactPhone] = useState('');
+  const [deliveryLocation, setDeliveryLocation] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,8 +46,12 @@ const Cart = () => {
       return;
     }
 
+    if (!contactPhone.trim() || !deliveryLocation.trim()) {
+      alert("Please fill in contact phone and delivery location.");
+      return;
+    }
+
     try {
-      // Step 1: Create order
       const orderResponse = await fetch("https://bakeryproject-1onw.onrender.com/api/orders", {
         method: "POST",
         headers: {
@@ -55,7 +62,9 @@ const Cart = () => {
           products: cart.map(item => ({
             productId: item._id,
             quantity: item.quantity
-          }))
+          })),
+          contactPhone,
+          deliveryLocation
         })
       });
 
@@ -69,7 +78,6 @@ const Cart = () => {
 
       const orderId = orderData.order._id;
 
-      // Step 2: Create payment
       const paymentResponse = await fetch(`https://bakeryproject-1onw.onrender.com/api/payments/create-payment/${orderId}`, {
         method: "GET",
         headers: {
@@ -131,23 +139,52 @@ const Cart = () => {
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-semibold">Total</h3>
               <p className="text-2xl text-pink-600 font-bold">
-                $
-                {cart
-                  .reduce(
-                    (total, product) =>
-                      total + product.price * product.quantity,
-                    0
-                  )
-                  .toFixed(2)}
+                ${cart.reduce((total, product) => total + product.price * product.quantity, 0).toFixed(2)}
               </p>
             </div>
+
+            {showFields && (
+              <div className="mb-4 space-y-4">
+                <input
+                  type="text"
+                  placeholder="Contact Phone"
+                  value={contactPhone}
+                  onChange={(e) => setContactPhone(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-pink-700"
+                />
+                <input
+                  type="text"
+                  placeholder="Delivery Location"
+                  value={deliveryLocation}
+                  onChange={(e) => setDeliveryLocation(e.target.value)}
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-pink-700"
+                />
+              </div>
+            )}
+
             <div className="flex flex-col sm:flex-row gap-4 justify-end pt-4">
-              <button onClick={clearCart} className="w-full sm:w-60 bg-gray-300 text-gray-800 font-bold py-2 rounded-lg hover:bg-gray-400">
+              <button
+                onClick={clearCart}
+                className="w-full sm:w-60 bg-gray-300 text-gray-800 font-bold py-2 rounded-lg hover:bg-gray-400"
+              >
                 Clear Cart
               </button>
-              <button onClick={handleCheckout} className="w-full sm:w-60 bg-pink-600 text-white font-bold py-2 rounded-lg hover:bg-pink-700">
-                Pay Now
-              </button>
+
+              {!showFields ? (
+                <button
+                  onClick={() => setShowFields(true)}
+                  className="w-full sm:w-60 bg-pink-700 text-white font-bold py-2 rounded-lg hover:bg-pink-700"
+                >
+                  Enter Delivery Info
+                </button>
+              ) : (
+                <button
+                  onClick={handleCheckout}
+                  className="w-full sm:w-60 bg-pink-700 text-white font-bold py-2 rounded-lg hover:bg-pink-700"
+                >
+                  Pay Now
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -170,7 +207,7 @@ const Cart = () => {
                     e.stopPropagation();
                     alert("Added to cart!");
                   }}
-                  className="hover:bg-pink-700 text-white py-2 px-6 rounded-xl transition bg-pink-600"
+                  className="hover:bg-pink-700 text-white py-2 px-6 rounded-xl transition bg-pink-700"
                 >
                   Add to Cart
                 </button>
