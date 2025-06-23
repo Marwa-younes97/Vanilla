@@ -4,6 +4,7 @@ import Toast from "./Toast"; // استيراد مكون التوست
 // import { FaSearch } from "react-icons/fa";
 import Select from "react-select";
 
+
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -17,6 +18,8 @@ const ProductList = () => {
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState("success");
   const [offerFilter, setOfferFilter] = useState(""); // "", "on", "off"
+
+  
 
   const token = localStorage.getItem("authToken");
 
@@ -84,7 +87,7 @@ const ProductList = () => {
 
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
-
+console.log("🔧 handleUpdateProduct started");
     if (!token) {
       showToast("You must be logged in to update a product.", "error");
       return;
@@ -522,9 +525,7 @@ const ProductList = () => {
                     isDisabled={!editedProduct.offer?.isOnSale} // ✅ تعطيل الحقل إذا لم يكن On Sale
                   />
                 </div>
-              </form>
-            </div>
-            <div className="mb-4 flex justify-between gap-4">
+                            <div className="mb-4 flex justify-between gap-4">
               <button
                 type="submit"
                 className="w-1/2 bg-pink-600 text-white py-2 rounded hover:bg-pink-700"
@@ -538,6 +539,8 @@ const ProductList = () => {
               >
                 Cancel
               </button>
+            </div>
+              </form>
             </div>
           </div>
         </div>
